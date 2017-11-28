@@ -30,7 +30,7 @@ window.guardianPolyfilled = (): void => {
     const pendingScripts = [];
     const scripts = [
         window.guardian.config.polyfillioUrl,
-        window.guardian.config.bundleUrl,
+        // window.guardian.config.bundleUrl, TODO: reinstate!
     ];
     const firstScript = document.scripts[0];
     const firstScriptParent = firstScript.parentNode;

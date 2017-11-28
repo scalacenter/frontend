@@ -11,7 +11,13 @@ const app = server();
 // the main export for the JVM JS interpreter to run
 // eslint-disable-next-line import/prefer-default-export
 export const render = (props: Object) => {
-    const Application = props.route ? routes[props.route] : routes.NotFound;
+    let Application;
+
+    if (props.route && routes[props.route]) {
+        Application = routes[props.route];
+    } else {
+        Application = routes.notfound;
+    }
     const body = app.renderToString(
         <Body {...props}>
             <Application {...props} />
