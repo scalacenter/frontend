@@ -1,11 +1,13 @@
 const request = require('request');
 const express = require('express');
+const bodyParser = require('body-parser');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpackConfig = require('../__config__/webpack.config.dev')({
     browser: true,
 });
+const inputProps = require('./input-props');
 
 const compiler = webpack(webpackConfig);
 const app = express();
@@ -56,13 +58,32 @@ app.use(
         noInfo: true,
     })
 );
-
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use('/assets/fonts', express.static('../static/target/fonts'));
 app.use(webpackHotMiddleware(compiler));
 app.get('/component/*', (req, res, next) => {
-    request(propsUrl, respond(req, res, next, {
-        route: req.path.split('/')[2].toLowerCase(), //TODO: how brittle this is!
-    }));
+    res.send(inputProps('header'));
+});
+app.post('/component/*', (req, res, next) => {
+    try {
+        request(
+            propsUrl,
+            respond(
+                req,
+                res,
+                next,
+                Object.assign(
+                    {
+                        route: req.path.split('/')[2].toLowerCase(), //TODO: how brittle this is!
+                    },
+                    JSON.parse(req.body.json) //TODO: and this!
+                )
+            )
+        );
+    } catch (e) {
+        return next(e);
+    }
+
 });
 app.get('/', (req, res, next) => {
     request(propsUrl, respond(req, res, next));

@@ -9,7 +9,7 @@ import {
     dropdown,
 } from './style.css';
 
-export default () => (
+export default ({ navItems }) => (
     <header style={header}>
         <div style={support}>become a supporter</div>
         <ul style={topnav}>
@@ -21,11 +21,7 @@ export default () => (
         <h1 style={logo}>the guardian</h1>
         <nav>
             <ul style={nav}>
-                <li>news</li>
-                <li>opinion</li>
-                <li>sport</li>
-                <li>arts</li>
-                <li>lifestyle</li>
+                {navItems.map(navItem => <li>{navItem}</li>)}
                 <li style={dropdown}>sections</li>
             </ul>
         </nav>
