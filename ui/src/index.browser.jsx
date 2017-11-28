@@ -3,14 +3,15 @@
 import { render } from '@guardian/guui';
 
 import Body from 'components/body';
-
-// this should be managed by a route somehow
-import Application from 'views/404';
+import routes from './routes';
 
 const container: ?Element = document.body;
 
 const renderApp = () => {
     const props = window.guardian;
+    const Application = window.guardian.route
+        ? routes[window.guardian.route]
+        : routes.NotFound;
 
     if (container) {
         render(

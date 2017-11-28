@@ -47,7 +47,7 @@ module.exports = env => {
                 libraryTarget: 'commonjs',
                 path: path.join(ui, 'dist'),
             },
-            devtool: 'cheap-module-eval-source-map',
+            devtool: 'eval',
             stats,
         });
     }

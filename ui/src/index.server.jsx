@@ -4,15 +4,14 @@ import { server } from '@guardian/guui';
 
 import head from 'components/head';
 import Body from 'components/body';
-
-// this should be managed by a route somehow
-import Application from 'views/404';
+import routes from './routes';
 
 const app = server();
 
 // the main export for the JVM JS interpreter to run
 // eslint-disable-next-line import/prefer-default-export
 export const render = (props: Object) => {
+    const Application = props.route ? routes[props.route] : routes.NotFound;
     const body = app.renderToString(
         <Body {...props}>
             <Application {...props} />

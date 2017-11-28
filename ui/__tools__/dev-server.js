@@ -9,25 +9,15 @@ const webpackConfig = require('../__config__/webpack.config.dev')({
 
 const compiler = webpack(webpackConfig);
 const app = express();
+const propsUrl = 'http://localhost:9000/dev/ui/props.json';
 
-app.use(
-    webpackDevMiddleware(compiler, {
-        publicPath: webpackConfig.output.publicPath,
-        noInfo: true,
-    })
-);
+const respond = (req, res, next, props = {}) => {
+    return (errors, response, body) => {
+        delete require.cache[require.resolve('../dist/ui.bundle.server')];
 
-app.use('/assets/fonts', express.static('../static/target/fonts'));
+        // $FlowFixMe
+        const { frontend } = require('../dist/ui.bundle.server'); // eslint-disable-line global-require, import/no-unresolved
 
-app.use(webpackHotMiddleware(compiler));
-app.get('/', (req, res, next) => {
-    delete require.cache[require.resolve('../dist/ui.bundle.server')];
-
-    // $FlowFixMe
-    const { frontend } = require('../dist/ui.bundle.server'); // eslint-disable-line global-require, import/no-unresolved
-    const propsUrl = 'http://localhost:9000/dev/ui/props.json';
-
-    request(propsUrl, (errors, response, body) => {
         const errorMsg = `
             <h1>
                 Unable to connect to
@@ -51,12 +41,33 @@ app.get('/', (req, res, next) => {
         }
 
         try {
-            return res.send(frontend.render(JSON.parse(body)));
+            return res.send(frontend.render(
+                Object.assign(JSON.parse(body), props)
+            ));
         } catch (e) {
             return next(e);
         }
-    });
+    }
+}
+
+app.use(
+    webpackDevMiddleware(compiler, {
+        publicPath: webpackConfig.output.publicPath,
+        noInfo: true,
+    })
+);
+
+app.use('/assets/fonts', express.static('../static/target/fonts'));
+app.use(webpackHotMiddleware(compiler));
+app.get('/component/*', (req, res, next) => {
+    request(propsUrl, respond(req, res, next, {
+        route: req.path.split('/')[2].toLowerCase(), //TODO: how brittle this is!
+    }));
 });
+app.get('/', (req, res, next) => {
+    request(propsUrl, respond(req, res, next));
+});
+
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
     res.status(500).send(err.stack);
