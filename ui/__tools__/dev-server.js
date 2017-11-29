@@ -62,7 +62,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 app.use('/assets/fonts', express.static('../static/target/fonts'));
 app.use(webpackHotMiddleware(compiler));
 app.get('/component/*', (req, res, next) => {
-    res.send(inputProps('header'));
+    res.send(inputProps(req.path.split('/')[2].toLowerCase()));
 });
 app.post('/component/*', (req, res, next) => {
     try {
