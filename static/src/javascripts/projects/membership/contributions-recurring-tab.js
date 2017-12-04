@@ -169,6 +169,7 @@ const populateUserDetails = (contributorDetails: ContributorDetails): void => {
 };
 
 export const recurringContributionTab = (): void => {
+    debugger
     fetch(
         `${config.get('page.userAttributesApiUrl')}/me/mma-monthlycontribution`,
         {
