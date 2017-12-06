@@ -79,8 +79,16 @@ const addReferrerDataToAcquisitionLinksInInteractiveIframes = (): void => {
                 const iframeSrc = el.getAttribute('src');
                 if (
                     iframeSrc &&
+<<<<<<< HEAD
                     iframeSrc.startsWith('https://interactive.guim.co.uk') &&
                     iframeSrc === event.source.location.href
+=======
+                    // Currently the only acquisition components on the site are from the Mother Load campaign.
+                    // Work needs to be done so we don't have to hard code what campaigns are running.
+                    iframeSrc.startsWith(
+                        'https://interactive.guim.co.uk/embed/2017/12/the-mother-load/'
+                    )
+>>>>>>> master
                 ) {
                     el.contentWindow.postMessage(
                         JSON.stringify({
