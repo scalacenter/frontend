@@ -246,6 +246,7 @@ $fc-item-gutter: $gs-gutter / 4;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    margin-left: auto;
 
     .inline-icon {
         fill: $neutral-3;
@@ -401,5 +402,46 @@ $fc-item-gutter: $gs-gutter / 4;
     .fc-sublink__link {
         color: #ffffff;
     }
+
+}
+
+//review stars to be moved to another stylesheet
+.fc-item__star-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: calc((-#{$gs-baseline} / 2) + 1px);
+    background-color: $garnett-review-highlight;
+    padding: 0 $gs-gutter / 4;
+
+    .inline-icon {
+        &.inline-star {
+            display: inline-block;
+        }
+
+        &.star__item--golden {
+            svg {
+                fill: $garnett-neutral-1;
+            }
+        }
+
+        &.star__item--grey {
+            svg {
+                stroke: $garnett-neutral-1;
+                fill: transparent;
+            }
+        }
+    }
+    .fc-item__card-style {
+        font-style: italic;
+        font-size: 14px;
+        margin-top: $gs-baseline / 6;
+        margin-right: $gs-baseline / 2;
+    }
+
+    .stars {
+        border-left: 1px solid #000;
+        padding-left: $gs-baseline / 2;
+    }
+
 
 }

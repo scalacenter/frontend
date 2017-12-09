@@ -73,6 +73,7 @@ data-test-id="facia-card"
         }
 
         @meta(item)
+
     </div>
 }
 
@@ -204,9 +205,10 @@ data-test-id="facia-card"
                 @item.bylineText.map { byline =>
                     <div class="fc-item__byline">@byline</div>
                 }
-
-                @item.starRating.map { rating =>
-                    @starRating(rating)
+                @if(!experiments.ActiveExperiments.isParticipating(experiments.Garnett)) {
+                    @item.starRating.map { rating =>
+                        @starRating(rating)
+                    }
                 }
             </div>
 
@@ -216,7 +218,19 @@ data-test-id="facia-card"
                     @mediaMeta(item)
                 } else {
                     <div class="fc-item__standfirst-wrapper">
-                        @standfirst(item)
+                        @if(!item.starRating){
+                            @standfirst(item)
+                        }
+                        @if(item.starRating){
+                            <div class="fc-item__star-wrapper">
+                                <div class="fc-item__card-style">
+                                    @item.cardStyle
+                                </div>
+                                    @item.starRating.map { rating =>
+                                        @starRating(rating)
+                                    }
+                            </div>
+                        }
                         @meta(item)
                     </div>
                 }
