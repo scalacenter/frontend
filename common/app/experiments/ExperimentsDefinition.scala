@@ -29,6 +29,10 @@ trait ExperimentsDefinition {
   def isParticipating(experiment: Experiment)(implicit request: RequestHeader): Boolean =
     isIn(experiment)(_.isParticipating)
 
+  def inOrOut[T](experiment: Experiment, in: => T, out: => T)(implicit request: RequestHeader): T = {
+    if (isParticipating(experiment)) in else out
+  }
+
   def isControl(experiment: Experiment)(implicit request: RequestHeader): Boolean =
     isIn(experiment)(_.isControl)
 }
