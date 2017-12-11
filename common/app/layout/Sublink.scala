@@ -286,7 +286,8 @@ case class ContentCard(
   useShortByline: Boolean,
   group: String,
   branding: Option[Branding],
-  properties: Option[PressedProperties]
+  properties: Option[PressedProperties],
+  fromShowMore: Boolean = false
 ) extends FaciaCard {
 
   private lazy val storyContent: Option[PressedStory] = properties.flatMap(_.maybeContent)
