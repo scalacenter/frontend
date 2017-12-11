@@ -11,7 +11,7 @@ object ActiveExperiments extends ExperimentsDefinition {
     CommercialPaidContentTemplate,
     ABNewDesktopHeader,
     Garnett,
-    ShowMoreExperiment
+    HideShowMoreButtonExperiment
   )
   implicit val canCheckExperiment = new CanCheckExperiment(this)
 }
@@ -62,7 +62,7 @@ object Garnett extends Experiment(
   participationGroup= Perc0C
 )
 
-object ShowMoreExperiment extends Experiment(
+object HideShowMoreButtonExperiment extends Experiment(
   name = "remove-show-more-ab",
   description = "Users in this experiment will not see the show more button on front collections",
   owners = Seq(Owner.withGithub("Quarpt")),

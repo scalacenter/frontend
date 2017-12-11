@@ -2,7 +2,7 @@ package layout
 
 import common.{Edition, LinkTo}
 import conf.switches.Switches
-import experiments.{ActiveExperiments, ShowMoreExperiment}
+import experiments.{ActiveExperiments, HideShowMoreButtonExperiment}
 import model.PressedPage
 import model.facia.PressedCollection
 import model.meta.{ItemList, ListItem}
@@ -368,7 +368,7 @@ object Front extends implicits.Collections {
   }
 
   private def applyShowMoreExperiment(faciaContainer: FaciaContainer)(implicit request: RequestHeader): FaciaContainer = {
-    val showMoreEnabled = ActiveExperiments.inOrOut(ShowMoreExperiment, in = false, out = true)
+    val showMoreEnabled = ActiveExperiments.inOrOut(HideShowMoreButtonExperiment, in = false, out = true)
     faciaContainer.copy(hasShowMoreEnabled = showMoreEnabled)
   }
 
