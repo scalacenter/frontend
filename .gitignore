@@ -73,3 +73,9 @@ static/src/stylesheets/pasteup/.npmrc
 *.key
 .vscode/settings.json
 
+# For bloop's integration tests
+*.config
+test-config.sbt
+test
+base-directory
+
