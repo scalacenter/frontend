@@ -1,6 +1,6 @@
 package com.gu
 
-import com.gu.versioninfo.VersionInfo
+// import com.gu.versioninfo.VersionInfo
 import com.typesafe.sbt.packager.universal.UniversalPlugin
 import sbt._
 import sbt.Keys._
@@ -123,7 +123,7 @@ object ProjectSettings {
       .settings(frontendDependencyManagementSettings)
       .settings(frontendCompilationSettings)
       .settings(frontendTestSettings)
-      .settings(VersionInfo.settings)
+      // .settings(VersionInfo.settings)
       .settings(libraryDependencies ++= Seq(macwire, commonsIo))
       .settings(packageName in Universal := applicationName)
       .settingSets(settingSetsOrder)
@@ -139,7 +139,7 @@ object ProjectSettings {
       .settings(frontendDependencyManagementSettings)
       .settings(frontendCompilationSettings)
       .settings(frontendTestSettings)
-      .settings(VersionInfo.settings)
+      // .settings(VersionInfo.settings)
       .settings(libraryDependencies ++= Seq(commonsIo))
       .settingSets(settingSetsOrder)
   }
