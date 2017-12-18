@@ -78,4 +78,5 @@ static/src/stylesheets/pasteup/.npmrc
 test-config.sbt
 test
 base-directory
+project/TestPlugin.scala
 
