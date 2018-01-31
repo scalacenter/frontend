@@ -1,0 +1,42 @@
+@(projectName: Option[String] = None, head: Html)(implicit page: model.Page, request: RequestHeader, context: model.ApplicationContext)
+
+@import model.Page.getContent
+@import conf.switches.Switches.WeAreHiring
+@import implicits.Strings.String2Uri
+@import views.support.JavaScriptPage.getMap
+
+@if(WeAreHiring.isSwitchedOn) {
+    <!--
+     __        __                      _     _      _
+     \ \      / /__    __ _ _ __ ___  | |__ (_)_ __(_)_ __   __ _
+      \ \ /\ / / _ \  / _` | '__/ _ \ | '_ \| | '__| | '_ \ / _` |
+       \ V  V /  __/ | (_| | | |  __/ | | | | | |  | | | | | (_| |
+        \_/\_/ \___|  \__,_|_|  \___| |_| |_|_|_|  |_|_| |_|\__, |
+                                                            |___/
+    Ever thought about joining us?
+    https://workforus.theguardian.com/careers/digital-development/
+     --->
+}
+<title>@views.support.Title(page)</title>
+
+@fragments.metaData()
+@head
+
+@* stylesheet <link>s - get the stylesheets downloading ASAP *@
+@defining(getContent(page)) { content =>
+    @fragments.stylesheets(projectName, content.exists(_.tags.isCrossword), content.exists(_.tags.isInteractive))
+}
+
+@*
+Protect against ReferenceErrors in IE:
+`window.console` only exists when the dev tools are open. If you reference
+something that doesn't exist, JavaScript will throw a `ReferenceError`. Here, we
+ensure console always exists one can safely reference it.
+Example: http://output.jsbin.com/jodureg/1
+*@
+<script>
+    window.console = window.console || undefined;
+</script>
+
+@* inline JS - blocking *@
+@fragments.inlineJSBlocking()

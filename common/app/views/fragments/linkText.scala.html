@@ -1,0 +1,9 @@
+@import common.LinkTo
+@import model.SupportedUrl
+@import views.support.{RemoveOuterParaHtml, RowInfo}
+
+@(faciaContent: model.pressed.PressedContent, info: RowInfo)(implicit request: RequestHeader)
+
+<a href="@LinkTo(SupportedUrl.fromFaciaContent(faciaContent))" data-link-name="@info.rowNum | text">
+    @faciaContent.properties.linkText.map(RemoveOuterParaHtml.apply)
+</a>

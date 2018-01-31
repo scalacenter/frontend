@@ -1,0 +1,21 @@
+@include tone-content-icons(news, 'news');
+
+.tonal--tone-news {
+    .tonal__main {
+        .element-pullquote {
+            &:before,
+            &:after {
+                background-color: $news-default;
+            }
+        }
+    }
+
+    .tone-colour {
+        color: $news-default;
+    }
+
+    .tone-accent-border {
+        border-color: $news-accent;
+    }
+}
+

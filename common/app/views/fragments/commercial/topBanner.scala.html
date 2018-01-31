@@ -1,0 +1,11 @@
+@import views.support.Commercial.topAboveNavSlot
+
+@()(implicit page: model.Page)
+
+<div class="@topAboveNavSlot.cssClasses(page.metadata)">
+  @fragments.commercial.standardAd(
+    "top-above-nav",
+    topAboveNavSlot.slotCssClasses,
+    topAboveNavSlot.adSizes
+  )
+</div>

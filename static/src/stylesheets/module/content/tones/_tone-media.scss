@@ -1,0 +1,149 @@
+@include tone-content-icons(media, 'white');
+
+@include tone-content(
+    media, // $tone
+    $media-background, // $tonal__header-background
+    $neutral-6, // $tonal__header-text
+    $media-default, // $tonal__header-link
+    400, // $tonal__headline-weight
+    #ffffff, // $tonal__headline-colour
+    $media-default, // $tonal__headline-accent
+    $media-background, // $tonal__standfirst-background
+    $neutral-4, // $tonal__standfirst-text
+    #ffffff, // $tonal__standfirst-link
+    $media-background, // $tonal__article-background
+    $media-default // $tonal__article-link
+);
+
+// Podcast and media tones share page styling
+.tonal--tone-media {
+    color: $neutral-4;
+    padding-top: 0;
+
+    .byline,
+    .byline .tone-colour,
+    .byline .tone-colour:hover,
+    .content__dateline,
+    .meta__numbers .sharecount__heading,
+    .meta__numbers .commentcount2__heading,
+    .meta__numbers .sharecount__value {
+        color: $neutral-3;
+    }
+
+    .meta__numbers .commentcount2__value {
+        color: $neutral-4;
+    }
+
+    .meta__numbers .inline-comment-16 {
+        fill: $neutral-4;
+    }
+
+    .meta__numbers .inline-share {
+        fill: $neutral-3;
+    }
+
+    .commentcount2 {
+        &:hover,
+        &:focus {
+            color: $neutral-4;
+        }
+    }
+
+    .badge--alt {
+        border-color: $neutral-1;
+    }
+
+    .caption {
+        color: $neutral-4;
+
+        a {
+            color: $neutral-4;
+            border-bottom: 1px solid $neutral-2;
+            transition: border-color .15s ease-out;
+
+            &:hover {
+                border-bottom: 1px solid $neutral-7;
+                text-decoration: none;
+            }
+        }
+    }
+
+    .byline,
+    .content__dateline,
+    .content__meta-container,
+    .commentcount,
+    .meta__numbers,
+    .meta__social,
+    .meta__extras,
+    .submeta,
+    .submeta__keywords,
+    .meta__number:not(u-h) + .meta__number {
+        border-color: $media-mute;
+    }
+
+    .from-content-api {
+        a {
+            @extend %u-underline;
+        }
+
+        a,
+        .u-underline {
+            color: inherit;
+            border-bottom-color: $neutral-2;
+
+            &:hover,
+            &:focus {
+                border-color: mix($neutral-2, $neutral-4, 50%);
+            }
+            &:active {
+                color: $media-default;
+                border-color: $media-default;
+            }
+        }
+    }
+
+    .submeta__section-labels .submeta__link {
+        color: $neutral-6;
+    }
+
+    .submeta__keywords .submeta__link {
+        color: $neutral-3;
+    }
+
+    .submeta__link:after {
+        color: $neutral-2;
+    }
+
+    &.content--paidgallery {
+        background: darken($paid-article, 63%);
+
+        .tonal__standfirst,
+        .ad-slot--gallery-inline {
+            background: none;
+        }
+
+        .gallery__main-content .meta__extras {
+            border: 0;
+        }
+
+        .gallery__divider,
+        .ad-slot--dark .ad-slot__label {
+            border-top-color: $neutral-6;
+        }
+
+        .gallery__meta-container::before,
+        .gallery::before {
+            content: none;
+        }
+
+        .gallery__img-container {
+            padding-bottom: 0;
+        }
+
+        .gallery__item + .gallery__item:not(.gallery__item--advert) .gallery__img-container {
+            padding-top: 1.25rem;
+            margin-top: 1.25rem;
+            border-top: 1px solid $neutral-6;
+        }
+    }
+}

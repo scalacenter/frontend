@@ -1,0 +1,26 @@
+.badge-slot {
+    width: 33px;
+    margin-top: 2px;
+
+    @include mq($until: desktop) {
+        float: left;
+        margin-right: $gs-gutter / 4;
+    }
+
+    @include mq(desktop) {
+        width: gs-span(1);
+    }
+}
+
+.badge-slot__img {
+    width: 100%;
+}
+
+/* Content Rules
+   ========================================================================== */
+.content__head--is-badged {
+    .content__section-label,
+    .content__series-label {
+        float: none;
+    }
+}

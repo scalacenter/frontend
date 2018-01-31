@@ -1,0 +1,112 @@
+@import conf.Configuration.site.host
+@import conf.Configuration.Media
+@import views.support.{RenderClasses, Video700}
+@import com.netaporter.uri.dsl._
+@import model.pressed.CardStyle
+
+@import model.ImageMedia
+@import model.content.MediaWrapper._
+@import model.content.MediaWrapper
+@import model.content.MediaAsset
+@import conf.switches.Switches.YouTubePosterOverride
+@import model.VideoFaciaProperties
+@import views.html.fragments.items.elements.facia_cards.title
+
+@(media: model.content.MediaAtom, displayCaption: Boolean, displayDuration: Boolean = true, displayEndSlate: Boolean = true, playable: Boolean = true, posterImageOverride: Option[ImageMedia] = None, cardStyle: Option[CardStyle] = None, mediaWrapper: Option[MediaWrapper] = None, faciaHeaderProperties: Option[VideoFaciaProperties] = None)(implicit request: RequestHeader)
+
+@defining(media.activeAssets.headOption) { activeAsset: Option[MediaAsset] =>
+@defining(media.expired.getOrElse(false)){expired: Boolean =>
+@defining(playable && !posterImageOverride.exists(_ => YouTubePosterOverride.isSwitchedOn)){sixteenByNine: Boolean =>
+
+
+    <div data-media-atom-id="@media.id" class="@RenderClasses(Map(
+        ("u-responsive-ratio", true),
+        ("u-responsive-ratio--hd", sixteenByNine),
+        ("youtube-media-atom", true),
+        ("no-player", !playable || expired )
+    ))"
+    @for(endSlatePath <- media.endSlatePath if displayEndSlate)  {
+      data-end-slate="@endSlatePath"
+    }
+    >
+}
+
+        @for(asset <- activeAsset if playable && !expired) {
+            @defining(s"https://www.youtube.com/embed${
+                asset.id
+                .addParams(List(
+                "enablejsapi" -> 1,
+                "rel" -> 0,
+                "showinfo" -> 0,
+                "origin" -> (if(mediaWrapper.contains(EmbedPage)) Some(Media.externalEmbedHost) else if(!host.isEmpty) Some(host) else None)
+                )).toString
+                }") { embedUri: String  =>
+                <iframe class="youtube-media-atom__iframe" id="youtube-@asset.id" width="100%" height="100%"
+                        src="@embedUri" frameborder="0"
+                        allowfullscreen="">
+                </iframe>
+                }
+            @if(mediaWrapper.contains(MediaWrapper.VideoContainer)){
+                <div class="video-overlay">
+                    <div class="video-overlay__headline">
+
+                    @for(f <- faciaHeaderProperties) {
+                        @title(f.header, 0, 0)
+                        @if(f.showByline) {
+                            <div class="fc-item__byline">@f.byline</div>
+                        }
+
+                    </div>
+                    <span class="video-overlay__duration">
+                    @media.formattedDuration
+                    </span>
+                </div>
+                <a href="@f.header.url.get(request)" class="video-container-overlay-link"></a>
+            }
+          }
+        }
+        @defining(posterImageOverride.filter(_ => !playable || YouTubePosterOverride.isSwitchedOn) orElse media.posterImage) { bestPosterImage =>
+            @bestPosterImage.map { image =>
+                <div class="@RenderClasses(Map("youtube-media-atom__overlay" -> true, "vjs-big-play-button" -> !expired))" style="background-image: url(@Video700.bestSrcFor(image))">
+
+                @if(!expired) {
+                    @if(mediaWrapper.contains(ImmersiveMainMedia)) {
+                        <div class='gs-container'>
+                            <div class='content__main-column'>
+                                <div class='youtube-media-atom__immersive-interface'>
+                                    <div class="youtube-media-atom__play-button vjs-control-text">
+                                        Play Video
+                                        @fragments.inlineSvg("play", "icon")
+                                    </div>
+                                    <div class="youtube-media-atom__bottom-bar__duration"></div>
+                                </div>
+                            </div>
+                        </div>
+                    } else {
+                        <div class="youtube-media-atom__play-button vjs-control-text">Play Video</div>
+                        @for(duration <- media.formattedDuration.filter(_ => displayDuration)) {
+                            <div class="youtube-media-atom__bottom-bar">
+                                <div class="youtube-media-atom__bottom-bar__icon">
+                                @fragments.inlineSvg("video-icon", "icon")
+                                </div>
+                                <div class="youtube-media-atom__bottom-bar__duration">@duration</div>
+                            </div>
+                        }
+                    }
+                } else {
+                    <div class="vjs-error-display vjs-modal-dialog">
+                        <div class="vjs-modal-dialog-content">
+                            This video has been removed. This could be because it launched early, our rights have expired, there was a legal issue, or for another reason.
+                        </div>
+                    </div>
+                }
+                </div>
+            }
+        }
+        </div>
+}
+}
+
+@if(displayCaption & !mediaWrapper.contains(ImmersiveMainMedia)) {
+    @mediaAtomCaption(media.title, mediaWrapper.contains(MainMedia))
+}

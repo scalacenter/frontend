@@ -1,0 +1,27 @@
+@(content: model.ContentType,
+  related: model.RelatedContent,
+  cssClass: String = "",
+  isPaidContent: Boolean)(implicit request: RequestHeader, context: model.ApplicationContext)
+@import common.Edition
+@import views.support.ContentFooterContainersLayout
+
+<div class="content-footer @if(cssClass){content-footer--@cssClass}">
+    @fragments.discussionFooter(content.content, content.trail.isCommentable, content.trail.isClosedForComments, content.content.shortUrlId)
+
+    @ContentFooterContainersLayout(content.content, isPaidContent) {
+        @fragments.storyPackagePlaceholder(content, related, isPaidContent)
+    } {
+        @fragments.onwardPlaceholder(isPaidContent)
+    } {
+        <div class="js-repositioned-comments content__repositioned-comments"></div>
+    } {
+        @fragments.mostPopularPlaceholder(content.metadata.sectionId)
+    } {
+        @* The high-relevant commercial component will be inserted on the client-side
+         * <div class="fc-container fc-container--commercial">@fragments.commercial.commercialComponentHigh(isPaidContent)</div>
+         *@
+    } {
+        <div class="fc-container fc-container--commercial js-container--commercial">@fragments.commercial.commercialComponent()</div>
+    }
+
+</div>

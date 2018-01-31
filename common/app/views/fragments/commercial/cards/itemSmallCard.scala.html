@@ -1,0 +1,26 @@
+@(item: layout.PaidCard,
+  omnitureId: String,
+  optAdvertClassNames: Option[Seq[String]] = None,
+  optClassNames: Option[Seq[String]] = None,
+  useCardBranding: Boolean)(implicit request: RequestHeader)
+
+@import views.html.fragments.commercial.cardLogo
+@import views.html.fragments.inlineSvg
+@import views.support.Commercial.CssClassBuilder
+
+<div class="@CssClassBuilder.paidForContainer(optClassNames)">
+    <a href="@item.targetUrl"
+        class="@CssClassBuilder.linkFromSmallCard(item, optAdvertClassNames, useCardBranding)"
+        data-link-name="@omnitureId"
+        data-component="@omnitureId">
+        <p class="advert__title">
+            @for(icon <- item.icon){@inlineSvg(icon, "icon")}
+            @item.headline
+        </p>
+    </a>
+    @if(useCardBranding) {
+        @for(branding <- item.branding) {
+            @cardLogo(branding, isStandardSizeCard = true)
+        }
+    }
+</div>

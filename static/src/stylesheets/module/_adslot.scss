@@ -1,0 +1,504 @@
+.ad-slot {
+    position: relative;
+    z-index: $zindex-ads;
+    overflow: initial;
+
+    .js-off & {
+        display: none;
+    }
+}
+
+/* Ad slots with sticky MPUs should be vertically separated from the following content, but collapse if empty.
+ * Margins on children don't affect the position of elements we make sticky.
+ */
+.ad-slot-container > :last-child {
+    padding-bottom: 0;
+    margin-bottom: $gs-baseline * 2;
+}
+.ad-slot--dark {
+    background-color: lighten($media-background, 2.5%);
+}
+
+.ad-slot--right {
+    position: sticky;
+    top: 0;
+
+    // Sorry but no other choice :=(
+    .has-sticky .paidfor-band ~ .content__main & {
+        top: 46px;
+    }
+
+    &.is-sticky {
+        width: 300px;
+    }
+}
+
+.ad-slot__label {
+    @include font-size(12, 20);
+    position: relative;
+    height: $mpu-ad-label-height;
+    background-color: $neutral-8;
+    margin: 0 auto;
+    padding: 0 ($gs-baseline/3)*2;
+    border-top: 1px solid $neutral-5;
+    color: $neutral-2-contrasted;
+    text-align: left;
+    box-sizing: border-box;
+    font-family: $f-sans-serif-text;
+
+    .ad-slot--dark & {
+        color: $neutral-3;
+        border-top-color: $media-mute;
+        background-color: transparent;
+    }
+
+    &.feedback-submitted .ad-feedback,
+    .ad-feedback__thanks-message {
+        display: none;
+    }
+
+    &.feedback-submitted .ad-feedback__thanks-message {
+        display: inline-block;
+        float: right;
+    }
+}
+
+/**
+ * Banner ads
+ */
+
+.top-banner-ad-container {
+    background-color: $neutral-8;
+    // Needed for compatibility with IE11/Edge.
+    top: 0;
+
+    &:not(.top-banner-ad-container--not-sticky) {
+        position: sticky;
+        z-index: $zindex-sticky;
+
+        @include mq(desktop) {
+            z-index: $zindex-sticky-top-banner;
+        }
+    }
+}
+
+.top-banner-ad-container--fabric {
+    overflow: hidden;
+}
+
+.sticky-top-banner-ad {
+    transform: translate3d(0, 0, 0);
+    contain: layout;
+    z-index: $zindex-popover;
+    width: 100%;
+    position: fixed;
+    top: 0;
+}
+
+.sticky-top-banner-ad--animate {
+    will-change: transform;
+    transition: height 1s cubic-bezier(0, 0, 0, .985);
+}
+
+.ad-slot--top-banner-ad {
+    text-align: center;
+
+    .ad-slot__label {
+        /* this is the minimum width of possible ads sizes */
+        width: 728px;
+        border-top: 0;
+        padding: 0;
+        height: $gs-row-height/2;
+
+        @include mq(wide) {
+            margin: 0;
+        }
+    }
+
+    .has-page-skin & {
+        @include mq(wide) {
+            width: auto !important;
+            padding-left: 0 !important;
+            text-align: center;
+
+            .ad-slot__label {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+    }
+}
+
+.ad-slot--top-banner-ad-desktop {
+    margin: 0 auto;
+    min-height: 90px;
+    padding-bottom: $gs-row-height / 2;
+    padding-top: $gs-row-height / 2;
+
+    @include mq($until: tablet) {
+        display: none;
+    }
+
+    @include mq(wide) {
+        padding-left: $left-column-wide + $gs-gutter * 2;
+        margin-left: calc(50% - #{(gs-span($gs-max-columns) + $gs-gutter * 2) / 2});
+        text-align: left;
+
+        &:not(.ad-slot--fluid):not(.ad-slot--fabric):not(.ad-slot--fluid250) {
+            max-width: 970px;
+        }
+
+        .has-page-skin & {
+            margin-left: auto;
+        }
+    }
+
+    &.ad-slot--fabric {
+        > .ad-slot__label {
+            box-sizing: content-box;
+            // Copying stuff from _mixins.scss because I don't want to
+            // use @extend and no, I am not modifying the markup
+            margin-left: $gs-gutter / 2;
+            margin-right: $gs-gutter / 2;
+
+            @include mq(mobileLandscape) {
+                margin-left: $gs-gutter;
+                margin-right: $gs-gutter;
+            }
+            @include mq(containerWidestMobile) {
+                margin-left: auto;
+                margin-right: auto;
+                width: $mobile-max-container-width;
+            }
+            @include mq(tablet) {
+                padding-left: $gs-gutter;
+                padding-right: $gs-gutter;
+            }
+            @each $breakpoint, $container-width in $breakpoints {
+                @include mq($breakpoint) {
+                    width: $container-width;
+                }
+            }
+        }
+    }
+
+    .ad-slot__label {
+        margin-top: (-1) * $gs-row-height / 2;
+    }
+}
+
+/**
+ * Inline ads
+ */
+.ad-slot--inline,
+.ad-slot--container-inline,
+.ad-slot--container-inline.ad-slot--fluid,
+.ad-slot--gallery-inline,
+.ad-slot--liveblog-inline {
+    width: $mpu-original-width;
+    margin: $gs-baseline auto;
+    min-width: $mpu-original-width;
+    min-height: $mpu-original-height + $mpu-ad-label-height;
+    text-align: center;
+
+    @include mq(mobileLandscape) {
+        width: 320px;
+    }
+    @include mq(tablet) {
+        width: auto;
+    }
+}
+
+.ad-slot--liveblog-inline,
+.ad-slot--gallery-inline {
+    background-color: transparent;
+}
+
+.ad-slot--container-inline,
+.ad-slot--container-inline.ad-slot--fluid {
+    @include mq(mobileLandscape) {
+        margin-top: 0;
+    }
+    @include mq(tablet) {
+        margin: 0 $gs-gutter/2;
+    }
+}
+.ad-slot--gallery-inline {
+    background-color: $media-background;
+
+    @include mq(mobileLandscape) {
+        width: 300px;
+    }
+    @include mq(tablet) {
+        width: auto;
+    }
+    @include mq(desktop) {
+        &,
+        .ad-slot__label {
+            text-align: left;
+        }
+    }
+}
+.ad-slot--inline,
+.ad-slot--container-inline {
+    background-color: $neutral-8;
+
+    @include mq(tablet) {
+        width: 300px;
+    }
+}
+.ad-slot--inline {
+    @include mq(tablet) {
+        float: right;
+        margin-top: $gs-baseline/3;
+        margin-left: $gs-gutter;
+    }
+
+    @include mq(tablet, leftCol) {
+        clear: left;
+    }
+}
+.ad-slot__content {
+    > div {
+        margin: 0 auto;
+    }
+}
+.ad-slot--container-inline:not(.ad-slot--fluid) {
+    .ad-slot__content {
+        margin: 0 auto;
+    }
+    @include mq(tablet) {
+        position: relative;
+        height: auto;
+
+        .content-footer & {
+            width: 300px;
+        }
+
+        .linkslist-container & {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .ad-slot__label {
+            padding: 0 $gs-gutter;
+        }
+
+        .ad-slot__content {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            top: $mpu-ad-label-height;
+            height: 250px;
+        }
+    }
+}
+.ad-slot--liveblog-inline {
+    @include mq(tablet) {
+        padding-bottom: $gs-baseline*2;
+
+        & > div:not(.ad-slot__label) {
+            width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+}
+.ad-slot--liveblog-inline {
+    background-color: $neutral-6;
+
+    .ad-slot__label {
+        color: $neutral-2;
+        border-top-color: $neutral-3;
+    }
+}
+.ad-slot--mpu-banner-ad {
+    display: none;
+    width: $mpu-original-width;
+    min-height: $mpu-original-height + $mpu-ad-label-height;
+    margin-bottom: $gs-baseline*2;
+
+    @include mq(desktop) {
+        display: block;
+    }
+}
+
+.ad-slot--adfeature {
+    background-color: $paid-article-mpu;
+}
+
+.ad-slot--outstream {
+    @include mq(desktop) {
+        width: 620px;
+        height: $mpu-ad-label-height + 350px;
+    }
+}
+
+/**
+ * Commercial Components
+ */
+.ad-slot--commercial-component,
+.ad-slot--commercial-component-high {
+    .has-page-skin & {
+        @include mq(wide) {
+            margin-left: auto;
+            margin-right: auto;
+            width: gs-span(12) + ($gs-gutter*2);
+        }
+    }
+}
+
+.fc-container--commercial .ad-slot--commercial-component-high {
+    margin-bottom: $gs-baseline * 2;
+}
+
+.ad-slot--im {
+    float: left;
+    width: $gs-gutter * 6.5;
+
+    @include mq(mobileLandscape) {
+        width: gs-span(3);
+    }
+
+
+    &:not(.ad-slot--rendered) {
+        width: 0;
+        height: 0;
+    }
+
+    &.ad-slot--rendered {
+        margin: 5px $gs-gutter / 2 $gs-baseline / 2 0;
+        @include mq(mobileLandscape) {
+            margin-bottom: $gs-baseline;
+            margin-right: $gs-gutter;
+        }
+    }
+}
+
+.ad-slot--inline-book,
+.ad-slot--books-inline {
+    @include mq(mobileLandscape) {
+        width: gs-span(2);
+    }
+}
+
+.fc-container--sponsored .fc-container:first-child,
+.fc-container--paid-content .fc-container:first-child,
+.fc-container--sponsored,
+.fc-container--paid-content {
+    .fc-container__header + .fc-container__body {
+        @include mq(tablet, leftCol) {
+            margin-top: 78px;
+        }
+    }
+}
+
+/**
+ * Page Skins
+ */
+.ad-slot--page-skin {
+    height: 0;
+    overflow: hidden;
+}
+@include mq(mobile, $until: wide) {
+    .has-page-skin {
+        background-image: none !important;
+    }
+}
+
+/**
+ * Fluid ad slots don't have widths
+ */
+.ad-slot--fluid {
+    min-height: 250px;
+    line-height: 10px;
+    padding: 0;
+    margin: 0;
+
+    &:not(.ad-slot--im) {
+        width: auto;
+    }
+
+    &.ad-slot--commercial-component-high {
+
+        &,
+        & > .ad-slot__content > iframe {
+            transition: height 1s;
+        }
+    }
+
+    &.ad-slot--liveblog-inline {
+        @include mq(mobile, $until: mobileLandscape) {
+            margin-left: $gs-gutter / -2;
+            margin-right: $gs-gutter / -2;
+        }
+        @include mq(mobileLandscape, $until: tablet) {
+            margin-left: -$gs-gutter;
+            margin-right: -$gs-gutter;
+        }
+    }
+}
+
+.ad-slot--fabric-v1 {
+    min-height: 250px;
+}
+
+.ad-slot--fabric {
+    overflow: hidden;
+    width: auto;
+    min-height: 250px;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+
+    &.ad-slot--top-banner-ad-desktop {
+        @include mq(wide) {
+            margin-left: 0;
+        }
+    }
+}
+
+.ad-slot--fabric-v1,
+.ad-slot--fluid250 {
+    width: auto;
+    margin-left: 0;
+    padding: 0;
+
+    .ad-slot__label {
+        display: none;
+    }
+}
+
+.ad-slot--fluid250 {
+    @include mq(desktop) {
+        min-height: 250px;
+    }
+}
+
+.ad-slot--offset-right {
+    @include mq(desktop) {
+        margin-right: -20em;
+    }
+
+    @include mq(wide) {
+        margin-right: -25em;
+    }
+}
+
+.ad-slot--survey {
+    // we avoid 'display none' otherwise the slot would close, but the survey slot is
+    // out-of-page and shouldn't be seen
+    height: 0;
+}
+
+.ad-slot--unruly {
+    width: 100%;
+
+    @include mq(tablet) {
+        float: none;
+        margin-left: 0;
+    }
+
+}

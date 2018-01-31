@@ -1,0 +1,8 @@
+@(pageModel: football.controllers.TablesPage, comps: Seq[model.Competition])(implicit request: RequestHeader, context: model.ApplicationContext)
+
+@mainLegacy(pageModel.page, Some("football")){
+}{
+
+    @football.views.html.fragments.teamlistBody(pageModel, comps)
+
+}

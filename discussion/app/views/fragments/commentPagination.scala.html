@@ -1,0 +1,14 @@
+@(page: discussion.CommentPage)(implicit request: RequestHeader)
+
+@import common.SimplePagePaths
+
+@page.metadata.pagination.map{ paginate =>
+    @fragments.pagination(
+        page.metadata.webTitle,
+        paginate,
+        SimplePagePaths(page.metadata.url),
+        Some("js-discussion-change-page"),
+        false,
+        Some("Comments")
+    )
+}

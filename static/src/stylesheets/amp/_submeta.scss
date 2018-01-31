@@ -1,0 +1,65 @@
+.submeta {
+    border-top: 1px dotted $neutral-5;
+    font-family: 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+    margin-top: $gs-baseline;
+    padding-top: $gs-baseline / 2;
+}
+
+.submeta--borderless-bottom .submeta__keywords {
+    border-bottom: 0;
+}
+
+.submeta__label {
+    font-size: 12px;
+    line-height: 16px;
+    color: $neutral-2;
+    display: block;
+    margin-bottom: -($gs-baseline / 4);
+}
+
+.submeta__keywords {
+    padding-top: $gs-baseline / 2;
+    padding-bottom: $gs-baseline;
+    border-bottom: 1px dotted $neutral-5;
+    margin-bottom: $gs-baseline / 2;
+}
+
+.submeta__links {
+    font-size: 0;
+    list-style: none;
+    overflow: hidden;
+    margin-bottom: 0;
+    margin-left: -$gs-gutter / 4;
+    margin-top: 0;
+}
+
+.submeta__link-item {
+    @include trailing-slash-item;
+}
+
+.submeta__link {
+    @include trailing-slash-link;
+    font-weight: 500;
+    line-height: 22px;
+
+    &:after {
+        @include trailing-slash;
+        color: $neutral-5;
+    }
+
+    .submeta__keywords & {
+        font-size: 15px;
+        color: $neutral-2;
+    }
+
+    .submeta__section-labels & {
+        font-size: 16px;
+        line-height: 22px;
+    }
+}
+
+.submeta__badge {
+    float: right;
+    margin-top: -$gs-baseline;
+    margin-left: $gs-gutter / 2;
+}

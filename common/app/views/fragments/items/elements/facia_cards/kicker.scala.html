@@ -1,0 +1,61 @@
+@(header: layout.FaciaCardHeader, classes: Seq[String])(implicit request: RequestHeader)
+
+@import common.LinkTo
+@import model.pressed._
+
+@* TODO: this is only used by dream snaps now (see title.scala.html for the actual kicker branching code for
+   elsewhere). Given that, how much of the below do we need? *@
+
+@makeLink(uri: String, inner: String) = {
+    <a href="@LinkTo(uri)" data-link-name="kicker" class="fc-item__kicker @classes.mkString(" ")">@Html(inner)</a>
+}
+
+@makeSpan(inner: String) = {
+    <span class="fc-item__kicker @classes.mkString(" ")">@Html(inner)</span>
+}
+
+@header.kicker.map {
+    case BreakingNewsKicker => {
+        <span class="fc-item__breaking-indicator @classes.mkString(" ")">Breaking news</span>
+    }
+
+    case LiveKicker => {
+        <span class="fc-item__kicker fc-item__live-indicator @classes.mkString(" ")"><span class="live-pulse-icon flashing-image"></span>Live</span>
+    }
+
+    case CartoonKicker => {
+        @makeSpan("Cartoon")
+    }
+
+    case AnalysisKicker => {
+        @makeSpan("Analysis")
+    }
+
+    case PodcastKicker(_, Some(series)) => {
+        @makeLink(series.url, series.name)
+    }
+
+    case PodcastKicker(_, None) => {
+        @makeSpan("Podcast")
+    }
+
+    case ReviewKicker => {
+        @makeSpan("Review")
+    }
+
+    case TagKicker(_, tagName, tagLink, _) => {
+        @makeLink(tagLink, tagName)
+    }
+
+    case SectionKicker(_, sectionName, sectionLink) => {
+        @makeLink(sectionLink, sectionName)
+    }
+
+    case FreeHtmlKickerWithLink(_, html, link) => {
+        @makeLink(link, html)
+    }
+
+    case FreeHtmlKicker(_, html) => {
+        @makeSpan(html)
+    }
+}

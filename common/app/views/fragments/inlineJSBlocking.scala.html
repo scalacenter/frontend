@@ -1,0 +1,51 @@
+@import common.InlineJs
+@import conf.switches.Switches.{AsyncCss, FontSwitch}
+@import templates.inlineJS.blocking.js.{applyRenderConditions, config, enableStylesheets, loadFonts, shouldEnhance, loadApp}
+@import templates.inlineJS.blocking.polyfills.js.{details, raf, setTimeout}
+
+@()(implicit page: model.Page, request: RequestHeader, context: model.ApplicationContext)
+
+@* NOTE the order of these includes is important  *@
+<script id="gu">
+    // ************* POLYFILLS *************
+    // Mostly handled by polyfill.io below. These are needed for inline JS though, so cannot rely on pf.io
+
+    // It's faster to pass arguments in setTimeout than to use an anon function, but IE <10 can't do that.
+    // Used by RAF polyfill.
+    @Html(setTimeout().body)
+
+    // Pollyfill requestAnimationFrame
+    @InlineJs(raf().body, "raf.js")
+
+    // Polyfill details
+    @InlineJs(details().body, "details.js")
+
+
+    // ************* RENDER-CRITICAL BLOCKING JS *************
+
+
+    // determine whether to run enhanced JS
+    @InlineJs(shouldEnhance(page.metadata).body, "shouldEnhance.js")
+
+    // page config
+    @Html(config(page).body)
+
+    // apply render conditions
+    @InlineJs(applyRenderConditions().body, "applyRenderConditions.js")
+
+    // try and load fonts before we use the stylesheets
+    @if(FontSwitch.isSwitchedOn) {
+        @InlineJs(loadFonts().body, "loadFonts.js")
+    }
+
+    @if(AsyncCss.isSwitchedOn) {
+        // enable non-blocking stylesheets
+        // borrows *heavily* from https://github.com/filamentgroup/loadCSS.
+        @InlineJs(enableStylesheets().body, "enableStylesheets.js")
+    }
+
+    // ************* LOAD THE MAIN APP ASYNC *************
+
+    @InlineJs(loadApp().body, "loadApp.js")
+
+</script>

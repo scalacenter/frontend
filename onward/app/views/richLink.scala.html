@@ -1,0 +1,28 @@
+@(content: model.ContentType)(implicit request: RequestHeader, context: model.ApplicationContext)
+@import conf.switches.Switches._
+@import conf.Static
+@import conf.Configuration
+@import play.api.Mode.Dev
+@import html.HtmlPageHelpers.RichLinksCSSFile
+
+<html class="svg">
+    <head>
+        <link rel="stylesheet" type="text/css" href="@Static("stylesheets/webfonts-hinting-off-kerning-on.css")" />
+
+
+        @if(context.environment.mode == Dev || !InlineCriticalCss.isSwitchedOn) {
+            <link rel="stylesheet" data-reload="head.rich-links" type="text/css" href="@Static(s"stylesheets/head.$RichLinksCSSFile.css")" />
+        } else {
+            <style>
+            @Html(common.Assets.css.head(Some("rich-links")))
+            body {
+              margin: 0;
+            }
+            </style>
+        }
+
+   </head>
+   <body width="30%">
+        @fragments.richLinkBody(content)
+    </body>
+</html>

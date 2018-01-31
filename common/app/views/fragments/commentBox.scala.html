@@ -1,0 +1,70 @@
+@()(implicit request: RequestHeader)
+<form class="component js-comment-box d-comment-box">
+
+    <div class="d-comment-box__meta">
+        <span class="d-comment-box__avatar-wrapper"></span>
+        <div class="d-comment-box__meta-text">
+            <span class="d-comment-box__author-label">Signed in as</span>
+            <span class="d-comment-box__author"></span>
+            @fragments.inlineSvg("reply", "icon", List("grey"))
+            <span class="d-comment-box__reply-to-author"></span>
+            <span class="u-fauxlink d-comment-box__show-parent" role="button">Show comment</span>
+            <span class="u-fauxlink d-comment-box__hide-parent" role="button">Hide comment</span>
+        </div>
+    </div>
+    <div class="d-comment-box__parent-comment-wrapper">
+        <div class="d-comment-box__parent-comment-spout"></div>
+        <div class="d-comment-box__parent-comment">
+            <span class="d-comment-box__parent-comment-author"></span>
+            <div class="d-comment-box__parent-comment-body"></div>
+            <span class="u-fauxlink d-comment-box__hide-parent" role="button">Hide comment</span>
+        </div>
+    </div>
+
+    <div class="d-comment-box__onboarding">
+        <h3>Welcome <span class="d-comment-box__onboarding-author"></span>, you’re about to make your first comment!</h3>
+        <p>Before you post, we’d like to thank you for joining the debate - we’re glad you’ve chosen to participate and we value your opinions and experiences.</p>
+
+        <div class="d-comment-box__onboarding-username">
+            <p>Please choose your username under which you would like all your comments to show up. You can only set your username once.</p>
+            <label class="d-comment-box__onboarding-username-label" for="usernameInput">Username: </label>
+            <span>Must be 6-20 characters, letters and/or numbers only, no spaces.</span>
+            <input type="text" id="usernameInput" class="d-comment-box__onboarding-username-input" placeholder="" value=""/>
+            <p class="d-comment-box__onboarding-username-error-message is-hidden"></p>
+        </div>
+
+        <p>Please keep your posts respectful and abide by the <a target="_blank" href="/community-standards">community guidelines</a> - and if you spot a comment you think doesn’t adhere to the guidelines, please use the ‘Report’ link next to it to let us know.</p>
+        <p>Please preview your comment below and click ‘post’ when you’re happy with it.</p>
+        <div class="d-comment-box__onboarding-preview-body"></div>
+        <button type="submit" class="u-button-reset button button--large button--primary submit-input--behaviour d-comment-box__onboarding-submit">Post your comment</button>
+        <button type="button" class="u-button-reset button button--large button--primary submit-input--behaviour d-comment-box__onboarding-cancel">Cancel</button>
+    </div>
+
+    <div class="d-comment-box__content">
+        <div class="d-comment-box__messages"></div>
+        <div class="d-discussion__error d-comment-box__premod">
+            @fragments.inlineSvg("status-alert", "icon")
+            <span class="d-discussion__error-text">Your comments are currently being pre-moderated (<a href="/community-faqs#311" target="_blank">why?</a>)</span>
+        </div>
+
+        <div class="d-comment-box__community-standards">Please keep comments respectful and abide by the <a href="/community-standards">community guidelines</a>.</div>
+        <label for="d-comment-box" class="u-h">Enter comment</label>
+        <textarea name="body" class="textarea d-comment-box__body" placeholder="Join the discussion…" id="d-comment-box"></textarea>
+        <button type="submit" data-link-name="post comment" class="u-button-reset button button--large button--primary submit-input--behaviour d-comment-box__submit">Post your comment</button>
+        <span class="u-fauxlink d-comment-box__preview" role="button">Preview</span>
+        <span class="u-fauxlink d-comment-box__hide-preview" role="button">Hide preview</span>
+        <span class="u-fauxlink d-comment-box__cancel" role="button">Cancel</span>
+        <ul class="d-comment-box__formatting-controls">
+            <li class="d-comment-box__formatting-bold" title="Bold">B</li>
+            <li class="d-comment-box__formatting-italic" title="Italic">i</li>
+            <li class="d-comment-box__formatting-quote" title="Quote">&#8221;</li>
+            <li class="d-comment-box__formatting-link" title="Link">Link</li>
+        </ul>
+        <div class="d-comment-box__preview-wrapper">
+            <div class="d-comment-box__preview-spout"></div>
+            <div class="d-comment-box__preview-block">
+                <div class="d-comment-box__preview-body"></div>
+            </div>
+        </div>
+    </div>
+</form>

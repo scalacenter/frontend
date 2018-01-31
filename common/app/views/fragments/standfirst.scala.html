@@ -1,0 +1,41 @@
+@import common.Edition
+@import model.ContentType
+@import views.support.{BulletCleaner, ContributorLinks, InBodyLinkCleaner, RenderClasses, withJsoup}
+
+@(item: ContentType)(implicit request: RequestHeader)
+
+<div class="@RenderClasses(Map(
+    "content__standfirst--gallery" -> item.content.isGallery,
+    "content__standfirst--immersive-article" -> (item.content.isImmersive && item.tags.isArticle),
+    "content__standfirst--advertisement" -> (item.content.isImmersive && item.tags.isPaidContent),
+    "content__standfirst--immersive-minute-article" -> item.tags.isTheMinuteArticle),
+    "content__standfirst")" data-link-name="standfirst" data-component="standfirst" @langAttributes(item.content)>
+    @item.fields.trailText.map{ t =>
+
+        @defining({
+            val trailText = views.support.StripHtmlTags(t)
+            // description has to end in a full stop in the metadata to match google linked data standards, but
+            // editorial style doesn't allow it in trail text.
+            s"$trailText${if (item.tags.isReview) "." else ""}"
+        }){ trailText =>
+            <meta itemprop="description" content="@trailText" />
+        }
+    }
+    @item.fields.standfirst.map { standfirst =>
+        @defining(Edition(request)) { edition =>
+            @withJsoup(BulletCleaner(
+                if(item.content.isImmersive && item.tags.isArticle && item.trail.byline) {
+                    if (standfirst.contains(item.trail.byline.get)) {
+                        ContributorLinks(standfirst, item.tags.contributors).toString()
+                    } else {
+                        standfirst + "<p>by " + ContributorLinks(item.trail.byline.get, item.tags.contributors) + "</p>"
+                    }
+                } else {
+                    standfirst
+                }
+            ))(
+                InBodyLinkCleaner("in standfirst link")
+            )
+        }
+    }
+</div>

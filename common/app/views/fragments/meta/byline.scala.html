@@ -1,0 +1,8 @@
+@import model.Tags
+@import views.support.ContributorLinks
+
+@(byline: Option[String], tags: Tags)(implicit request: RequestHeader)
+
+@byline.map { text =>
+    <p class="byline" data-link-name="byline" data-component="meta-byline">@ContributorLinks(text, tags.contributors)</p>
+}

@@ -1,0 +1,119 @@
+@()(implicit request: RequestHeader, context: model.ApplicationContext)
+
+@import conf.switches.Switches.R2PagePressServiceSwitch
+@import conf.Configuration
+@admin_main("Frontend Admin", isAuthed = true) {
+    <div class="row">
+
+        <div class="col-md-4">
+            <h3>Analytics</h3>
+            <div class="panel panel-default well--front">
+                <div class="panel-heading">Monitoring, analytics and performance.</div>
+                <div class="panel-body">
+                    <ul>
+                        <li><a href="@controllers.admin.routes.AnalyticsController.abtests()">A/B Tests</a></li>
+                        <li><a href="@controllers.admin.routes.AnalyticsConfidenceController.renderConfidence()">Confidence</a></li>
+                        <li>Content Performance Dashboards:
+                            <ul>
+                                <li><a href="@controllers.admin.routes.ContentPerformanceController.renderVideoEncodingsDashboard()">Video</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <h3>Development tools</h3>
+            <div class="panel panel-default well--front">
+                <div class="panel-heading">Tools for the development team.</div>
+                <div class="panel-body">
+                    <ul>
+                        <li><a href="/dev/switchboard">Switchboard</a></li>
+                        <li><a href="@Configuration.Elk.kibanaUrl/goto/643979153f817c4bb1b64f7d56a395a7">Deploy dashboard</a></li>
+                        <li><a href="@controllers.admin.routes.RadiatorController.renderRadiator()">Radiator</a></li>
+                        @if(R2PagePressServiceSwitch.isSwitchedOn) {
+                            <li><a href="@controllers.admin.routes.R2PressController.pressForm()">Press-a-page</a></li>
+                        }
+                        <li><a href="@controllers.admin.routes.RedirectController.redirect()">Redirects</a></li>
+                        <li><a href="@controllers.cache.routes.ImageDecacheController.renderImageDecacheForm()">Clear cache (images)</a></li>
+                        <li><a href="@controllers.cache.routes.PageDecacheController.renderPageDecache()">Clear cache (content)</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <h3>Metrics</h3>
+            <div class="panel panel-default well--front">
+                <div class="panel-heading">Ops metrics (is the site healthy?).</div>
+                <div class="panel-body">
+                    <ul>
+                        <li><a href="@Configuration.Elk.kibanaUrl">Kibana (Server side logs)</a></li>
+                        <li><a href="@controllers.admin.routes.MetricsController.renderLoadBalancers()">Load Balancers</a></li>
+                        <li><a href="@controllers.admin.routes.FastlyController.renderFastly()">Fastly</a></li>
+                        <li>
+                            <a href="@controllers.admin.routes.MetricsController.renderErrors()">Errors</a>
+                            <ul>
+                                <li><a href="@controllers.admin.routes.MetricsController.render4XX()">4XX</a></li>
+                                <li><a href="@controllers.admin.routes.MetricsController.render5XX()">5XX</a></li>
+                                <li><a href="@controllers.admin.routes.MetricsController.renderGooglebot404s()">Googlebot 404s</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="@controllers.admin.routes.MetricsController.renderMemory()">JVM Memory</a></li>
+                        <li><a href="@controllers.admin.routes.MetricsController.renderAssets()">Static assets</a></li>
+                        <li><a href="@controllers.admin.routes.MetricsController.renderAfg()">Assets frequency graph</a></li>
+                        <li><a href="@controllers.admin.routes.MetricsController.renderBundleVisualization()">Webpack bundles visualization</a></li>
+                        <li><a href="@controllers.admin.routes.MetricsController.renderBundleAnalyzer()">Webpack bundle analyzer report</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-4">
+            <h3>Troubleshoot</h3>
+            <div class="panel panel-default well--front">
+                <div class="panel-heading">Diagnose problems with features.</div>
+                <div class="panel-body">
+                    <ul>
+                        <li><a href="@controllers.admin.routes.TroubleshooterController.index()">Check a path</a></li>
+                        <li><a href="@controllers.admin.routes.SportTroubleshooterController.renderFootballTroubleshooter()">Football feeds</a></li>
+                        <li><a href="@controllers.admin.routes.SportTroubleshooterController.renderCricketTroubleshooter()">Cricket feeds</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <h3>Football admin</h3>
+            <div class="panel panel-default well--front">
+                <div class="panel-heading">Tools for including football statistics on pages.</div>
+                <div class="panel-body">
+                    <ul>
+                        <li><a href="@controllers.admin.routes.SiteController.index()">Main page</a></li>
+                        <li><a href="@controllers.admin.routes.TablesController.tablesIndex()">League tables</a></li>
+                        <li><a href="@controllers.admin.routes.PlayerController.playerIndex()">Players</a></li>
+                        <li><a href="@controllers.admin.routes.FrontsController.index()">Fronts</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <h3>Commercial Tools</h3>
+            <div class="panel panel-default well--front">
+                <div class="panel-heading">Tools for the commercial team</div>
+                <div class="panel-body">
+                    <ul>
+                        <li><a href="@controllers.admin.routes.CommercialController.renderCommercialMenu()">Main page</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}

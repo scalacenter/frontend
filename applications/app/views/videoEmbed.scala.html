@@ -1,0 +1,118 @@
+@import conf.{Configuration, Static}
+@import model.{EmbedPage, VideoPlayer}
+@import views.support.{SeoOptimisedContentImage, StripHtmlTags, Video640}
+@import conf.switches.Switches.EnhancedVideoPlayerSwitch
+
+@(page: EmbedPage)(implicit request: RequestHeader, context: model.ApplicationContext)
+
+<!DOCTYPE html>
+<html lang="en-GB" class="gu-video-embed-html ">
+    <head>
+        <title>@page.title</title>
+        <style>
+            * { margin: 0; padding: 0; }
+            figure { margin: 0 !important; }
+        </style>
+        <link rel="stylesheet" href="@Static("stylesheets/media-player.css")"/>
+        <base target="_parent"/>
+    </head>
+    <body>
+
+    @defining( page.item ) { video =>
+
+        <figure class="gu-video-embed" itemprop="video" itemscope itemtype="http://schema.org/VideoObject">
+            <meta itemprop="name" content="@Html(video.trail.headline)"/>
+            <meta itemprop="headline" content="@Html(video.trail.headline)"/>
+            <meta itemprop="url" content="@video.metadata.url"/>
+            @video.fields.trailText.map { t =>
+                <meta itemprop="description" content="@StripHtmlTags(t)" />
+                <meta itemprop="about" content="@StripHtmlTags(t)" />
+            }
+
+            <meta itemprop="datePublished" content="@video.trail.webPublicationDate.toString("yyyy-MM-dd")" />
+            <meta itemprop="name" content="@video.metadata.webTitle" />
+            <meta itemprop="uploadDate" content="@video.trail.webPublicationDate.toString("yyyy-MM-dd")" />
+            @video.elements.mainVideo.map { mv =>
+                <meta itemprop="duration" content="@mv.videos.ISOduration" />
+                <meta itemprop="height" content="@mv.videos.height" />
+                <meta itemprop="width" content="@mv.videos.width" />
+            }
+            <meta itemprop="requiresSubscription" content="no" />
+            <meta itemprop="image" content="@Html(video.content.openGraphImage)" />
+            @video.elements.thumbnail.map { img => <meta itemprop="thumbnail" content="@SeoOptimisedContentImage.bestSrcFor(img.images)" /> }
+            @video.elements.mainVideo.map { videoElement =>
+                @fragments.media.video(VideoPlayer(
+                    videoElement,
+                    Video640,
+                    video.trail.headline,
+                    autoPlay = true,
+                    showControlsAtStart = true,
+                    endSlatePath = video.endSlatePath,
+                    overrideIsRatioHd = None,
+                    path = Some(video.content.metadata.id)
+                ), enhance = true)
+            }
+        </figure>
+
+        <script>
+        var guardian = {
+            isEmbed: true,
+            isModernBrowser: (
+                'querySelector' in document
+                && 'addEventListener' in window
+                && 'localStorage' in window
+                && 'sessionStorage' in window
+                && 'bind' in Function
+                && (
+                    ('XMLHttpRequest' in window && 'withCredentials' in new XMLHttpRequest())
+                    || 'XDomainRequest' in window
+                )
+            ),
+            config: @Html(templates.js.javaScriptConfig(model.SimpleContentPage(video)).body),
+            adBlockers: { onDetect: [] }
+        };
+        @* Decide the Ophan PV ID here so we can share it with Google Analytics *@
+        guardian.config.ophan = {
+            // This is duplicated from
+            // https://github.com/guardian/ophan/blob/master/tracker-js/assets/coffee/ophan/transmit.coffee
+            // Please do not change this without talking to the Ophan project first.
+            pageViewId: new Date().getTime().toString(36) + 'xxxxxxxxxxxx'.replace(/x/g, function () {
+                return Math.floor(Math.random() * 36).toString(36);
+            })
+        };
+        @* Find the Ophan browser ID as well, for sharing with GA *@
+        @Html(templates.inlineJS.nonBlocking.js.ophanConfig().body)
+
+        var docClass = document.documentElement.className;
+
+        @* Get iframes parent url: http://www.nczonline.net/blog/2013/04/16/getting-the-url-of-an-iframes-parent/ *@
+        var parentUrl = (!!window.parent && window.parent !== window) ? document.referrer : '';
+
+        function hasSvgSupport() {
+            var ns = {'svg': 'http://www.w3.org/2000/svg'};
+            return !!document.createElementNS && !!document.createElementNS(ns.svg, 'svg').createSVGRect;
+        }
+
+        if (hasSvgSupport()) {
+            docClass += 'svg';
+        }
+
+        document.documentElement.className = docClass;
+        </script>
+
+        @if(EnhancedVideoPlayerSwitch.isSwitchedOn) {
+            <script>
+            (function (document) {
+                var script = document.createElement('script');
+                var ref = document.getElementsByTagName('script')[0];
+                script.src = '@Static("javascripts/graun.video-embed.js")';
+                ref.parentNode.insertBefore(script, ref);
+            })(document);
+            </script>
+        }
+
+        @fragments.analytics.base()(page, request, context)
+
+    }
+    </body>
+</html>

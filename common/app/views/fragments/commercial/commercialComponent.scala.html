@@ -1,0 +1,11 @@
+@import conf.switches.Switches.CommercialSwitch
+
+@if(CommercialSwitch.isSwitchedOn) {
+    @fragments.commercial.adSlot(
+        "merchandising",
+        Seq("commercial-component"),
+        Map("mobile" -> Seq("1,1", "2,2", "88,88", "fluid")),
+        showLabel=false,
+        refresh=false
+    ){ }
+}

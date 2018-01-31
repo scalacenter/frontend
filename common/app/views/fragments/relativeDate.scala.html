@@ -1,0 +1,13 @@
+@import org.joda.time.DateTime
+@import views.support.Format
+
+@(webPublicationDate: DateTime, isLive: Boolean = false, isFront: Boolean = false)(implicit request: RequestHeader)
+
+<p class="relative-timestamp @if(isFront){ front-timestamp}">
+    @if(isLive){
+        <i class="is-live-icon">LIVE</i>
+    } else {
+        @fragments.inlineSvg("clock", "icon", List("inline-icon--light-grey", "relative-timestamp__icon"))
+    }
+    <time class="js-timestamp" itemprop="datePublished" datetime="@webPublicationDate.toString("yyyy-MM-dd'T'HH:mm:ss'Z'")" data-timestamp="@webPublicationDate.getMillis">@* Anything inside here will be replaced by JS *@@Format(webPublicationDate, "d MMM y")</time>
+</p>

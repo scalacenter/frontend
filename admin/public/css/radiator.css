@@ -1,0 +1,182 @@
+
+body {
+    padding: 10px 40px;
+}
+
+.charts {
+    margin-bottom: 50px;
+}
+
+header {
+    color: #95B1CA;
+    font-size: 18px;
+}
+.navbar { display: none; }
+#riffraff li { font-size: 30px; line-height: 30px; }
+#riffraff small { font-size: 20px; }
+
+.down, .Failed { color: red; }
+.Running { color: orange; }
+ul {
+    margin: 0;
+}
+
+.riffraff-wrapper small {
+
+}
+
+.riffraff li {
+    width: 30px;
+    height: 30px;
+    font-size: 0;
+    color: transparent;
+    float: left;
+    display: inline-block;
+    margin: 5px 5px 0 0;
+}
+
+.riffraff li {
+    font-size: 9px;
+    color: #000000;
+    text-align: center;
+    line-height: 10px;
+}
+
+.riffraff li.Completed {
+    background-color: #B8FAA0;
+}
+
+.riffraff li.Failed {
+    background-color: red;
+}
+
+.riffraff li.Behind {
+    background-color: #21fa41;
+}
+
+#switches {
+    list-style-type: none;
+    padding: 0px;
+}
+#switches li {
+    margin: 3px;
+}
+#switches li span {
+    color: white;
+    padding: 2px;
+    margin: 2px;
+}
+#switches .expired {
+    background-color: red;
+}
+#switches .expiry-days-0 {
+    background-color: orangered;
+}
+#switches .expiry-days-1 {
+    background-color: orange;
+}
+
+.riffraff{
+    overflow: hidden;
+    padding: 0;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.riffraff li.Running {
+    background-color: yellow;
+}
+
+li.Not.running {
+    background-color: lightgrey;
+}
+
+h2, .cost a {
+    font-family: Georgia, serif;
+    color: #999;
+    clear: both;
+    font-weight: normal;
+    padding: 20px 0 10px 0;
+    margin: 0;
+}
+h2 small {
+    font-size: 14px;
+}
+
+.cost {
+    float: right;
+    display: inline;
+    padding-top: 0px;
+    font-size: 24px;
+}
+
+#logo .white {
+    color: #333;
+}
+
+a {
+    color: #005689;
+    text-decoration: none;
+}
+
+.pageviews-per-second {
+    font-size: 20px;
+    font-weight: bold;
+    color: #95B1CA;
+}
+
+
+.deployers {
+    list-style: none;
+    font-family: Georgia, serif;
+    color: #999;
+    font-weight: normal;
+}
+
+@media screen and (min-width: 600px) {
+    .charts {
+        width: 50%;
+        float: left;
+    }
+
+    .charts-full {
+        width: 100%;
+    }
+
+    .expiring-wrapper {
+        float: left;
+        width: 50%;
+    }
+
+    .monitoring-wrapper,
+    .pageviews-wrapper {
+        float: left;
+        width: 50%;
+    }
+}
+
+/* Teamcity */
+#build-wrapper {
+    float: left;
+    width: 50%;
+}
+
+#build-wrapper ul {
+    padding: 0;
+    list-style-type: none;
+}
+
+#build-wrapper a {
+    display:inline-block;
+    padding: 10px;
+    margin: 2px 0 2px 0;
+}
+
+#build-wrapper .succeeded {
+    background-color: #B8FAA0;
+}
+
+#build-wrapper .failed {
+    background-color: red;
+    color: white;
+}

@@ -1,0 +1,100 @@
+@import model.ContentType
+@import common.Edition
+@import model.pressed.{Comment, DefaultCardstyle, Feature, Media, SpecialReport}
+@import views.support.TrailCssClasses.toneClass
+@import views.support.{BulletCleaner, ImgSrc, Item460, RenderClasses, RichLinkContributor}
+
+@import model.DotcomContentType
+@(content: ContentType)(implicit request: RequestHeader)
+
+
+@kicker = {
+    @if(content.tags.isAnalysis) {
+        <span class="rich-link__kicker">Analysis</span>
+    }
+    @if(content.tags.isLiveBlog && content.fields.isLive) {
+        <span class="rich-link__kicker"><span class="rich-link__live live-pulse-icon flashing-image"></span>Live</span>
+    }
+    @if(content.tags.isPodcast) {
+        @content.content.seriesTag.map { series => <span class="rich-link__kicker">@series.metadata.webTitle</span> }
+    }
+}
+
+<div class="rich-link @toneClass(content)--item @RenderClasses(Map(
+    "rich-link--video" -> content.tags.isVideo,
+    "rich-link--gallery" -> content.tags.isGallery,
+    "rich-link--audio" -> content.tags.isAudio,
+    "rich-link--paidfor" -> content.tags.isPaidContent,
+    "rich-link--has-byline-pic" -> (content.content.hasTonalHeaderByline && content.tags.hasLargeContributorImage)
+    ))">
+
+    <div class="rich-link__container">
+        @if(content.content.cardStyle == Media || content.content.cardStyle == Feature || content.content.cardStyle == DefaultCardstyle) {
+            @content.trail.trailPicture.map { trailPictureContainer =>
+                @Item460.bestSrcFor(trailPictureContainer).map { imgSrc =>
+
+                    <div class="rich-link__image-container u-responsive-ratio">
+                        <img src="@imgSrc" itemprop="contentURL">
+                    </div>
+                }
+            }
+        }
+
+        <div class="rich-link__header">
+            <h1 class="rich-link__title">
+                @if(content.content.cardStyle == Comment ||
+                    (content.content.cardStyle == SpecialReport && content.content.hasTonalHeaderByline)
+                ) {
+                    @fragments.inlineSvg("quote", "icon")
+                }
+                <a class="rich-link__link">@Html(kicker.toString.replaceAll("^\\s+", "") + content.trail.headline)</a>
+            </h1>
+            @if(!content.tags.isMedia && (
+                content.content.cardStyle == Comment ||
+                (content.content.cardStyle == SpecialReport && content.content.hasTonalHeaderByline)
+            )) {
+                <div class="rich-link__byline">@content.trail.byline.map { byline => @Html(byline) }</div>
+            }
+            @content.content.starRating.map { stars => @fragments.items.elements.starRating(stars) }
+        </div>
+
+        @if(content.tags.isPaidContent){
+            <div class="rich-link__branding">
+                Paid for by
+                @content.metadata.commercial.flatMap(_.branding(Edition(request))).map(_.sponsorName)
+            </div>
+        }
+
+        @if(!content.tags.isGallery && !content.tags.isVideo) {
+            <div class="rich-link__standfirst u-cf">
+                @content.fields.trailText.map { trailText => @Html(BulletCleaner(trailText)) }
+            </div>
+            @if(content.content.hasTonalHeaderByline && content.tags.hasLargeContributorImage) {
+                @content.tags.contributors.headOption.map { profile =>
+                    @profile.properties.contributorLargeImagePath.map{ image =>
+                        <div class="rich-link__byline-img">
+                            <img class="rich-link__byline-img__img" src="@ImgSrc(image, RichLinkContributor)" alt="@profile.name" />
+                        </div>
+                    }
+                }
+            }
+            @*<div class="u-h meta__number" data-discussion-id="@content.discussionId"/>*@
+        }
+
+        <div class="rich-link__read-more">
+            <div class="rich-link__arrow">
+                @inlineSvg("arrow-in-circle", "icon")
+            </div>
+            <div class="rich-link__read-more-text">
+                @{content.metadata.contentType match {
+                        case Some(DotcomContentType.Audio) => "Listen"
+                        case Some(DotcomContentType.Gallery) => "View gallery"
+                        case Some(DotcomContentType.Video) => "Watch"
+                        case _ => "Read more"
+                    }
+                }
+            </div>
+        </div>
+        <a class="rich-link__link u-faux-block-link__overlay" href="@content.metadata.webUrl"></a>
+    </div>
+</div>

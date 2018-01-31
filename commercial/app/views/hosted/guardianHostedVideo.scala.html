@@ -1,0 +1,121 @@
+@import common.commercial.hosted.HostedVideoPage
+@import conf.Configuration.{environment => ConfigEnvironment}
+@import conf.Configuration.site.host
+@import views.html.hosted._
+@(page: HostedVideoPage)(implicit request: RequestHeader, context: model.ApplicationContext)
+
+@mainLegacy(page, Some("commercial")) { } {
+    <!--[if (gt IE 9)|(IEMobile)]><!-->
+    <style>
+    .hosted-tone {
+        color: @{page.fontColour.hexCode};
+    }
+
+    .hosted-tone-bg {
+        background-color: @{page.fontColour.hexCode};
+    }
+
+    .hosted-tone-btn {
+        color: @{page.fontColour.hexCode};
+        border: 1px solid @{page.fontColour.hexCode};
+    }
+
+    .hosted-page--bright .hosted-next-autoplay .hosted-tone-btn,
+    .hosted__banner .hosted-tone-btn,
+    .hosted-tone-btn:focus,
+    .hosted-tone-btn:hover {
+        background-color: @{page.fontColour.hexCode};
+    }
+
+    .hosted-page .hosted-next-autoplay__video,
+    .hosted-page .hosted-next-autoplay__next-in-series {
+        border-top: 1px solid @{page.fontColour.hexCode};
+    }
+
+    .hosted-next-autoplay__tile svg {
+        fill: @{page.fontColour.hexCode};
+    }
+
+    .hosted-page .hosted__link {
+        color: @{page.fontColour.hexCode};
+    }
+
+    .hosted-page ~ .survey-overlay-simple .survey-text__header {
+        background-color: @{page.fontColour.hexCode};
+    }
+
+    .hosted__next-page__carousel-arrows .inline-icon {
+        fill: @{page.fontColour.hexCode};
+        border-color: @{page.fontColour.hexCode};
+    }
+    </style>
+    <!--<![endif]-->
+    @guardianHostedHeader(if(page.fontColour.isDark) "hosted-video-page hosted-page--bright" else "hosted-video-page", page)
+    <div class="hosted-page l-side-margins hosted__side hosted-video-page @if(page.fontColour.isDark) {hosted-page--bright}">
+        <section class="hosted-tone--dark">
+            <div class="host hosted__container--full">
+                <div class="u-responsive-ratio u-responsive-ratio--hd">
+                    @page.video.youtubeId.map { youtubeId =>
+                        <iframe id="hosted-video-@youtubeId"
+                        data-media-id="@{page.video.mediaId}"
+                        data-duration="@{page.video.duration}"
+                        class="js-hosted-youtube-video hosted__youtube-video"
+                        src="https://www.youtube.com/embed/@youtubeId?modestbranding=1&showinfo=0&rel=0&enablejsapi=1@{if(ConfigEnvironment.isProd && !context.isPreview) "&origin=https://www.theguardian.com" else if(host != "") s"&origin=$host" else ""}"
+                        frameborder="0"
+                        allowfullscreen=""></iframe>
+                        @guardianHostedControlButtons(page)
+                    }.getOrElse {
+                        <video
+                        data-duration="@{page.video.duration}"
+                        data-media-id="@{page.video.mediaId}"
+                        controls="controls"
+                        preload="auto"
+                        style="width: 100%;"
+                        data-block-video-ads="true"
+                        poster="@{page.video.posterUrl}"
+                        class="vjs-hosted__video hosted__video gu-media--video vjs vjs-paused vjs-controls-enabled vjs_video_1-dimensions vjs-user-active">
+                            @for(source <- page.video.sources) {
+                                <source type="@source.format" src="@source.url">
+                            }
+                        </video>
+                    }
+                    @if(page.video.youtubeId.isDefined && !Option(page.video.posterUrl).getOrElse("").isEmpty){
+                        <div class="hosted__youtube-poster-image" style="background-image: url(@page.video.posterUrl);">
+                            <div class="hosted__youtube-play-button"></div>
+                        </div>
+                    }
+                    <div class="hosted-fading js-hosted-fading">
+                        <div class="hosted__video-overlay"></div>
+                        <div class="hosted__meta">
+                            <h1 class="hosted__heading">@{page.video.title}</h1>
+                        </div>
+                        <div class="hostedbadge">
+                            @hostedLogo(page)
+                        </div>
+                    </div>
+                    <div class="js-autoplay-placeholder"></div>
+                </div>
+            </div>
+        </section>
+        <section class="host host--legacy hosted__container hosted__container--content">
+            <header class="host__header hosted__social">
+                <div class="meta__social hosted__social-wrapper" data-component="share">
+                    @guardianHostedShareButtons(page)
+                </div>
+            </header>
+            <div class="host__body">
+                <div class="hosted__meta">
+                    <h1 class="hosted__heading hosted-tone">@{page.video.title}</h1>
+                </div>
+                <div class="hosted__standfirst">
+                    <p class="hosted__text">@Html(page.standfirst)</p>
+                    @hostedExplainer()
+                </div>
+            </div>
+
+            <div class="js-onward-placeholder hosted__next-page-wrapper"></div>
+        </section>
+        @guardianHostedCta(page, page.cta, isAMP = false)
+    </div>
+
+}

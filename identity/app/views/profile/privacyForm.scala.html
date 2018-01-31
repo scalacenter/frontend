@@ -1,0 +1,86 @@
+@import views.html.fragments.registrationFooter
+@import _root_.form.IdFormHelpers.nonInputFields
+@import com.gu.identity.model.Consent
+@import com.gu.identity.model.Consent._
+@import conf.switches.Switches.IdentityGdprMarketingConsentSwitch
+@import model.IdentityPage
+@import com.gu.identity.model.EmailNewsletters
+@import services.EmailPrefsData
+
+@(idUrlBuilder: services.IdentityUrlBuilder,
+  idRequest: services.IdentityRequest,
+  user: com.gu.identity.model.User,
+  privacyForm: Form[_root_.form.PrivacyFormData],
+  emailPrefsForm: Form[EmailPrefsData],
+  emailSubscriptions: List[String],
+  availableLists: EmailNewsletters,
+  consentsUpdated: Boolean = false,
+  consentHint: Option[String] = None
+)(implicit request: RequestHeader, messages: play.api.i18n.Messages)
+
+@marketingConsentForm = {
+    <form class="js-public-profile-form" novalidate action="@idUrlBuilder.buildUrl("/privacy/edit", idRequest)" role="main" method="post">
+        @views.html.helper.CSRF.formField
+
+        @* This displays both global and key-bound errors *@
+        @if(privacyForm.hasErrors) {
+            <div class="form__error">
+                Error processing the form. Your changes have not been saved:
+                <p>@privacyForm.errors.map(formError => (formError.key, formError.message)).mkString(", ")</p>
+            </div>
+        }
+
+        <div class="js-errorHolder manage-account__errors"></div>
+
+        <h2 class="manage-account-header">Would you like to receive information from the Guardian and their partners?</h2>
+        <p class="manage-account-headerNote">The Guardian and their partners would like to occasionally send you information about their products, services and events</p>
+        <div class="fieldset fieldset--manage-account-noborder fieldset--manage-account-block">
+            <div class="manage-account__switches">
+                <ul>
+                @helper.repeatWithIndex(privacyForm("consents"), min=1) { (consentField, index) =>
+                    <li>
+                        @if(index == 0) {
+                            @fragments.consentSwitch(consentField, consentHint)(messages)
+                        } else {
+                            @fragments.consentSwitch(consentField)(messages)
+                        }
+                    </li>
+                }
+                </ul>
+            </div>
+        </div>
+
+        <fieldset class="fieldset fieldset--manage-account-rightsubmit js-manage-account__ajaxForm-submit">
+            <div class="fieldset__heading"></div>
+            <div class="fieldset__fields">
+                <ul class="u-unstyled">
+                    <li>
+                        <button type="submit" class="manage-account__button" data-link-name="Save privacy preferences">Save changes</button>
+                    </li>
+                </ul>
+            </div>
+
+        </fieldset>
+    </form>
+}
+
+@if(consentsUpdated) {
+    <div class="form__success">
+        <h2>Thank you</h2>
+        <p>Your Email preferences have been updated.</p>
+    </div>
+}
+
+@* MARKETING CONSENT *@
+@if(IdentityGdprMarketingConsentSwitch.isSwitchedOn) {
+    @marketingConsentForm
+} else {
+    @profile.marketingConsentFormV1(idUrlBuilder, idRequest, privacyForm)
+}
+
+@* NEWSLETTERS *@
+<hr class="manage-account-divider" />
+<h2 class="manage-account-header">Select which newsletters you would like to receive</h2>
+@profile.emailPrefs(IdentityPage("/email-prefs", "Email preferences"), emailPrefsForm, emailSubscriptions, availableLists, idRequest, idUrlBuilder)
+
+@registrationFooter(idRequest, idUrlBuilder)

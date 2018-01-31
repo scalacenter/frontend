@@ -1,0 +1,28 @@
+@(content: model.ContentType,
+  related: model.RelatedContent,
+  isPaidContent: Boolean)(implicit request: RequestHeader, context: model.ApplicationContext)
+
+@import layout.FaciaContainer
+@import views.html.fragments.containers
+
+@container(title: String, dataId: String, href: Option[String]) = {
+    @containers.facia_cards.container(
+        containerDefinition = FaciaContainer.forStoryPackage(dataId, related.faciaItems, title, href),
+        frontId = Some(request.path.stripPrefix("/"))
+    )
+}
+
+@defining(Seq("related") ++ (if(isPaidContent) Seq("paid-content") else Nil)) { classes =>
+    @if(related.hasStoryPackage) {
+        <aside class="@classes.mkString(" ") more-on-this-story js-outbrain-anchor" role="complementary" aria-labelledby="related-content-head">
+            @container("more on this story", "more-on-this-story", href = None)
+        </aside>
+    } else {
+        <aside class="@classes.mkString(" ") js-related hide-on-childrens-books-site" role="complementary" data-test-id="related-content">
+        @*
+            We are not doing progressive enhancement here. The related content query is expensive and crawlers
+            were having too much fun with the links that used to be here. Also, nobody was actually reading those pages.
+        *@
+        </aside>
+    }
+}

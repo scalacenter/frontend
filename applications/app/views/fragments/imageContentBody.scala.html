@@ -1,0 +1,50 @@
+@(page: ImageContentPage)(implicit request: RequestHeader, context: model.ApplicationContext)
+@import layout.ContentWidths.ImageContentMedia
+@import views.support.Commercial._
+@import views.support.RenderClasses
+
+@defining(page.image) { image =>
+
+<div class="l-side-margins l-side-margins--media">
+    <article
+        class="@RenderClasses(Map(
+            "content--paid-content paid-content" -> isPaidContent(page),
+            "content--sponsored" -> isSponsoredContent(page),
+            "content--foundation-supported" -> isFoundationFundedContent(page)
+        ), "content content--media content--image tonal tonal--tone-media")"
+        itemprop="mainContentOfPage"
+        itemscope
+        itemtype="@image.metadata.schemaType"
+        role="main">
+
+        @if(isPaidContent(page)) {
+            @fragments.guBand()
+        }
+
+        @fragments.headTonal(image, page, showBadge = true)
+
+        <div class="content__main tonal__main tonal__main--tone-media">
+            <div class="gs-container">
+                <div class="content__main-column content__main-column--image">
+
+                    @image.elements.mainPicture.map { picture =>
+                        @fragments.imageFigure(
+                            picture.images,
+                            lightboxIndex = if(image.lightBox.isMainMediaLightboxable) Some(1) else None,
+                            widthsByBreakpoint = ImageContentMedia.inline
+                        )
+                    }
+
+                    @fragments.contentMeta(image, page)
+
+                    @fragments.submeta(image)
+                </div>
+            </div>
+        </div>
+    </article>
+</div>
+<div class="l-side-margins">
+    @fragments.contentFooter(image, page.related, isPaidContent = isPaidContent(page))
+</div>
+
+}

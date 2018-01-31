@@ -1,0 +1,11 @@
+@import football.controllers.CompetitionFilter
+@import model.Page
+
+@(competitions: Map[String, Seq[CompetitionFilter]], page: Page, competitionList: List[String])(implicit request: RequestHeader, context: model.ApplicationContext)
+
+@mainLegacy(page, Some("football")){
+}{
+
+    @football.views.html.fragments.competitionsBody(competitions, page, competitionList)
+
+}

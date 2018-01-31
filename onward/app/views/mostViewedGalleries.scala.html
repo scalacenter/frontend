@@ -1,0 +1,12 @@
+@import model.Page
+
+@(page: Page, container: Html)(implicit request: RequestHeader, context: model.ApplicationContext)
+
+@mainLegacy(page, Some("facia")){
+}{
+    <div class="fc-container">
+        <div class="l-side-margins">
+            @container
+        <div>
+    </div>
+}

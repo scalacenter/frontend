@@ -1,0 +1,9 @@
+@()(implicit page: model.GalleryPage, request: RequestHeader, applicationContext: model.ApplicationContext)
+
+@import _root_.html.HtmlPageHelpers.guardianHeaderHtml
+
+<div class="immersive-header-container">
+    @guardianHeaderHtml()
+    @fragments.page.body.mainContent()
+    @fragments.immersiveGalleryMainMedia()
+</div>

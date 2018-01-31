@@ -1,0 +1,59 @@
+stacks:
+- frontend
+regions:
+- eu-west-1
+
+templates:
+  frontend:
+    type: autoscaling
+    parameters:
+      bucket: aws-frontend-artifacts
+    dependencies:
+    - frontend-static
+    - update-ami
+
+deployments:
+  admin:
+    template: frontend
+  applications:
+    template: frontend
+  archive:
+    template: frontend
+  article:
+    template: frontend
+  commercial:
+    template: frontend
+  diagnostics:
+    template: frontend
+  discussion:
+    template: frontend
+  facia:
+    template: frontend
+  facia-press:
+    template: frontend
+  identity:
+    template: frontend
+  onward:
+    template: frontend
+  preview:
+    template: frontend
+  rss:
+    template: frontend
+  sport:
+    template: frontend
+  frontend-static:
+    type: aws-s3
+    parameters:
+      bucket: aws-frontend-static
+      cacheControl: public, max-age=315360000
+      prefixStack: false
+  update-ami:
+    type: ami-cloudformation-parameter
+    parameters:
+      cloudFormationStackByTags: false
+      prependStackToCloudFormationStackName: false
+      cloudFormationStackName: frontend
+      amiParametersToTags:
+        AMI:
+          Recipe: frontend-base
+          AmigoStage: PROD

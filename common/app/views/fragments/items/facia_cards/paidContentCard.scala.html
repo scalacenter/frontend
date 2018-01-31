@@ -1,0 +1,37 @@
+@(item: layout.ContentCard, omnitureId :String, containerIndex: Int, index: Int, isFirstContainer: Boolean)(implicit request: RequestHeader)
+
+@import views.html.fragments.items.elements.facia_cards._
+@import views.support.GetClasses
+@import Function.const
+@import views.html.fragments.commercial.cardLogo
+
+<div class="adverts--within-unbranded @GetClasses.forItem(item, isFirstContainer) @item.cardTypes.classes @if(!item.hasInlineSnapHtml) {js-snappable}">
+    <div class="fc-item__container">
+        @item.paidImage.map(image => itemImage(
+            image,
+            inlineImage = containerIndex == 0 && index < 4,
+            widthsByBreakpoint = Some(item.mediaWidthsByBreakpoint)
+        ))
+        <div class="fc-item__content">
+            <div class="fc-item__header">
+                @title(item.header, index, containerIndex, snapType = item.snapStuff.map(_.snapType))
+            </div>
+
+            @item.trailText.filter(const(item.showStandfirst)).map { text =>
+                <div class="fc-item__standfirst">@Html(text)</div>
+            }
+
+            @item.branding.map { branding =>
+                @cardLogo(branding, isStandardSizeCard = false)
+            }
+
+        </div>
+
+        <a href="@item.header.url.get"
+        class="u-faux-block-link__overlay js-headline-text"
+        data-link-name="@omnitureId"
+        data-component="@omnitureId"
+        tabindex="-1"></a>
+    </div>
+</div>
+

@@ -1,0 +1,515 @@
+@(page: model.Page)(implicit request: RequestHeader, context: model.ApplicationContext)
+
+@import play.api.libs.json.{JsObject, Json}
+@import conf.Static
+
+@mainLegacy(page){ }{
+
+<style>
+    .test-page-head {
+        margin-top: 30px;
+        font-size: 1.25rem;
+    }
+    .test-page-subhead {
+        font-size: 0.875rem;
+    }
+    .facia-switch {
+        font-family: sans-serif;
+        font-size: 12px;
+        margin: 0;
+        border: 1px solid #ccc;
+        border-right: 0;
+        background: #fff;
+        box-shadow: 0 0 2px rgba(0, 0, 0 ,0.3);
+        overflow: hidden;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1100;
+    }
+    .facia-switch dt {
+        color: #767676;
+        padding: 6px 10px;
+        margin: 0;
+        display: inline-block;
+    }
+    .facia-switch dd {
+        border-right: 1px solid #ccc;
+        padding: 6px 10px;
+        margin: 0;
+        display: inline-block;
+    }
+    .has-page-skin {
+        background-image: url(http://adimage.guardian.co.uk/pageskins/M34681-Guardian-takeover-Skin-1600x1200-6_1.gif);
+        background-attachment: fixed;
+        background-position: 50% 0;
+    }
+    .adverts--items-3 .advert:nth-child(3) ~ .advert,
+    .adverts--items-2 .advert:nth-child(2) ~ .advert { display: none; }
+</style>
+
+<div class="l-side-margins">
+
+    <div class="facia-container__inner">
+        <dl class="facia-switch">
+            <dt>Layout</dt>
+            <dd>
+                <a id="switchFronts" href="#">Fronts</a> •
+                <a id="switchArticles" href="#" class="current">Articles</a> •
+                <a id="pageSkin" href="#">Page skin?</a></dd>
+            <dt>Items in manual multiple</dt>
+            <dd>
+                <select id="dfp-number">
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                </select>
+            </dd>
+            <dt>Palette for manual single/multiple</dt>
+            <dd>
+                <select id="dfp-palette">
+                    <option value="brand">Brand</option>
+                    <option value="subscriptions">Subscriptions</option>
+                    <option value="membership">Membership</option>
+                    <option value="live">Live</option>
+                    <option value="jobs">Jobs</option>
+                    <option value="networks">Networks</option>
+                    <option value="books">Books</option>
+                    <option value="masterclasses">Masterclasses</option>
+                    <option value="travel">Travel</option>
+                    <option value="shop">Shop</option>
+                    <option value="money">Money</option>
+                    <option value="gardening">Gardening</option>
+                </select>
+            </dd>
+        </dl>
+    </div>
+
+    <script>
+        // window.require is assigned asynchronously
+        window.addEventListener('load', function () {
+            require('bootstraps/standard/main')
+                .next(['bootstraps/commercial'])
+                .next([
+                    'bean',
+                    'common/utils/$'
+                ])
+                .then(function (
+                    bean,
+                    $
+                ) {
+                    var $switchFronts   = $('#switchFronts'),
+                        $switchArticles = $('#switchArticles'),
+                        $rhColumn = $('.content__secondary-column');
+
+                    bean.on($switchFronts[0], 'click', function () {
+                        $('#head-css').attr('href', '@Static("stylesheets/head.facia.css")');
+                        $switchArticles.removeClass('current');
+                        $switchFronts.addClass('current');
+                        $rhColumn.hide();
+                    });
+
+                    bean.on($switchArticles[0], 'click', function () {
+                        $('#head-css').attr('href', '@Static("stylesheets/head.content.css")');
+                        $switchFronts.removeClass('current');
+                        $switchArticles.addClass('current');
+                        $rhColumn.show();
+                    });
+
+                    bean.on($('#pageSkin')[0], 'click', function () {
+                        $('body').toggleClass('has-page-skin');
+                    });
+
+                    var $number        = $('#dfp-number'),
+                        itemNumClasses = ['2', '3', '4']
+                            .map(function (num) {
+                                return 'adverts--items-' + num;
+                            });
+                    bean.on($number[0], 'change', function () {
+                        $('#multiple1 > .adverts')
+                            .removeClass(itemNumClasses.join(' '))
+                            .addClass('adverts--items-' + $number.val());
+                    });
+
+                    var $palette    = $('#dfp-palette'),
+                        toneClasses = ['brand', 'subscriptions', 'membership', 'live', 'jobs', 'networks', 'books', 'masterclasses', 'travel', 'shop', 'money', 'gardening']
+                            .map(function (tone) {
+                                return 'adverts--tone-' + tone;
+                            });
+                    bean.on($palette[0], 'change', function () {
+                        $('#multiple1 > .adverts, #manual1 > .adverts, .ad-slot--manual-inline > .adverts')
+                            .removeClass(toneClasses.join(' '))
+                            .addClass('adverts--tone-' + $palette.val());
+                    });
+                });
+        });
+
+        var loadCommercial = function (callback) {
+            window.addEventListener('load', function () {
+                // Commercial is in standard
+                require('bootstraps/standard/main')
+                    .next(['bootstraps/commercial'])
+                    .then(callback) ;
+            });
+        };
+    </script>
+
+    <article id="article" class="content content--article">
+        <div class="gs-container">
+            <h1 class="content__headline">All components</h1>
+            <h3 class="test-page-subhead">Inline</h3>
+            <div class="content__main-column content__main-column--article">
+                <div class="from-content-api js-article__body">
+                    <p>The relationship between Aronnax and Nemo is an intriguing dance between understanding and uneasiness. Initially, both of them delight in finding another academic mind. Aronnax is thrilled by the unexpected luxuries of the Nautilus, with its world-class collections of underwater treasures, inventively cooked seafood dishes and unending supply of seaweed cigars. Meanwhile, Nemo revels in showing off the Nautilus's capabilities to someone who understands them, taking Aronnax on little field trips to hunt sharks, visit the South Pole and explore the underwater city of Atlantis.</p>
+                    <div class="ad-slot ad-slot--im ad-slot--manual-inline"></div>
+                    <p>Nemo becomes increasingly sinister despite Aronnax's romanticised eye: he drugs his captives, refuses to explain the violent death of a crew member and alternates between sorrowful melancholia and cold fury. Ultimately it is Aronnax's transition from admiration and envy to complete fear that makes Twenty Thousand Leagues so eerie and exciting. At the climax when Nemo finally attacks a ship with Aronnax on board, the reader, Aronnax and the "archangel of hate" Nemo reach a satisfyingly simultaneous understanding. The two men watch in silence as the drowning sailors sink into an ocean crevasse like "a human antheap caught out by the invasion of the sea", and everyone finally understands that Nemo will never var his captors live. Later, when Aronnax literally crawls across the salon floor in complete darkness, desperate to avoid the sobbing Nemo who is playing his organ in the same room, my heart was pounding thrillingly hard. I've read Twenty Thousand Leagues multiple times and Nemo's madness still scares me.</p>
+                    <p>Its episodic chapters may not appeal to some, but as a beach read, Twenty Thousand Leagues is the perfect book to pick up and put down. You are consistently rewarded with iconic scenes: a battle with a giant squid, an underwater funeral, a trip to Atlantis. Verne's detailed descriptions of geography and sea life fill me with a curiously Victorian sense of potential for discovering the unknown.</p>
+                    <p>The relationship between Aronnax and Nemo is an intriguing dance between understanding and uneasiness. Initially, both of them delight in finding another academic mind. Aronnax is thrilled by the unexpected luxuries of the Nautilus, with its world-class collections of underwater treasures, inventively cooked seafood dishes and unending supply of seaweed cigars. Meanwhile, Nemo revels in showing off the Nautilus's capabilities to someone who understands them, taking Aronnax on little field trips to hunt sharks, visit the South Pole and explore the underwater city of Atlantis.</p>
+                    <div class="ad-slot ad-slot--im ad-slot--inline-book"></div>
+                    <p>Nemo becomes increasingly sinister despite Aronnax's romanticised eye: he drugs his captives, refuses to explain the violent death of a crew member and alternates between sorrowful melancholia and cold fury. Ultimately it is Aronnax's transition from admiration and envy to complete fear that makes Twenty Thousand Leagues so eerie and exciting. At the climax when Nemo finally attacks a ship with Aronnax on board, the reader, Aronnax and the "archangel of hate" Nemo reach a satisfyingly simultaneous understanding. The two men watch in silence as the drowning sailors sink into an ocean crevasse like "a human antheap caught out by the invasion of the sea", and everyone finally understands that Nemo will never var his captors live. Later, when Aronnax literally crawls across the salon floor in complete darkness, desperate to avoid the sobbing Nemo who is playing his organ in the same room, my heart was pounding thrillingly hard. I've read Twenty Thousand Leagues multiple times and Nemo's madness still scares me.</p>
+                    <p>Nemo becomes increasingly sinister despite Aronnax's romanticised eye: he drugs his captives, refuses to explain the violent death of a crew member and alternates between sorrowful melancholia and cold fury. Ultimately it is Aronnax's transition from admiration and envy to complete fear that makes Twenty Thousand Leagues so eerie and exciting. At the climax when Nemo finally attacks a ship with Aronnax on board, the reader, Aronnax and the "archangel of hate" Nemo reach a satisfyingly simultaneous understanding. The two men watch in silence as the drowning sailors sink into an ocean crevasse like "a human antheap caught out by the invasion of the sea", and everyone finally understands that Nemo will never var his captors live. Later, when Aronnax literally crawls across the salon floor in complete darkness, desperate to avoid the sobbing Nemo who is playing his organ in the same room, my heart was pounding thrillingly hard. I've read Twenty Thousand Leagues multiple times and Nemo's madness still scares me.</p>
+                    <div class="ad-slot ad-slot--im ad-slot--inline-event"></div>
+                    <p>Nemo becomes increasingly sinister despite Aronnax's romanticised eye: he drugs his captives, refuses to explain the violent death of a crew member and alternates between sorrowful melancholia and cold fury. Ultimately it is Aronnax's transition from admiration and envy to complete fear that makes Twenty Thousand Leagues so eerie and exciting. At the climax when Nemo finally attacks a ship with Aronnax on board, the reader, Aronnax and the "archangel of hate" Nemo reach a satisfyingly simultaneous understanding. The two men watch in silence as the drowning sailors sink into an ocean crevasse like "a human antheap caught out by the invasion of the sea", and everyone finally understands that Nemo will never var his captors live. Later, when Aronnax literally crawls across the salon floor in complete darkness, desperate to avoid the sobbing Nemo who is playing his organ in the same room, my heart was pounding thrillingly hard. I've read Twenty Thousand Leagues multiple times and Nemo's madness still scares me.</p>
+                    <p>Nemo becomes increasingly sinister despite Aronnax's romanticised eye: he drugs his captives, refuses to explain the violent death of a crew member and alternates between sorrowful melancholia and cold fury. Ultimately it is Aronnax's transition from admiration and envy to complete fear that makes Twenty Thousand Leagues so eerie and exciting. At the climax when Nemo finally attacks a ship with Aronnax on board, the reader, Aronnax and the "archangel of hate" Nemo reach a satisfyingly simultaneous understanding. The two men watch in silence as the drowning sailors sink into an ocean crevasse like "a human antheap caught out by the invasion of the sea", and everyone finally understands that Nemo will never var his captors live. Later, when Aronnax literally crawls across the salon floor in complete darkness, desperate to avoid the sobbing Nemo who is playing his organ in the same room, my heart was pounding thrillingly hard. I've read Twenty Thousand Leagues multiple times and Nemo's madness still scares me.</p>
+                    <p>Nemo becomes increasingly sinister despite Aronnax's romanticised eye: he drugs his captives, refuses to explain the violent death of a crew member and alternates between sorrowful melancholia and cold fury. Ultimately it is Aronnax's transition from admiration and envy to complete fear that makes Twenty Thousand Leagues so eerie and exciting. At the climax when Nemo finally attacks a ship with Aronnax on board, the reader, Aronnax and the "archangel of hate" Nemo reach a satisfyingly simultaneous understanding. The two men watch in silence as the drowning sailors sink into an ocean crevasse like "a human antheap caught out by the invasion of the sea", and everyone finally understands that Nemo will never var his captors live. Later, when Aronnax literally crawls across the salon floor in complete darkness, desperate to avoid the sobbing Nemo who is playing his organ in the same room, my heart was pounding thrillingly hard. I've read Twenty Thousand Leagues multiple times and Nemo's madness still scares me.</p>
+                    <p>Nemo becomes increasingly sinister despite Aronnax's romanticised eye: he drugs his captives, refuses to explain the violent death of a crew member and alternates between sorrowful melancholia and cold fury. Ultimately it is Aronnax's transition from admiration and envy to complete fear that makes Twenty Thousand Leagues so eerie and exciting. At the climax when Nemo finally attacks a ship with Aronnax on board, the reader, Aronnax and the "archangel of hate" Nemo reach a satisfyingly simultaneous understanding. The two men watch in silence as the drowning sailors sink into an ocean crevasse like "a human antheap caught out by the invasion of the sea", and everyone finally understands that Nemo will never var his captors live. Later, when Aronnax literally crawls across the salon floor in complete darkness, desperate to avoid the sobbing Nemo who is playing his organ in the same room, my heart was pounding thrillingly hard. I've read Twenty Thousand Leagues multiple times and Nemo's madness still scares me.</p>
+                </div>
+            </div>
+            <div class="ad-slot ad-slot--merchandising ad-slot--commercial-component fc-container__inner js-secondary-column content__secondary-column">
+            </div>
+        </div>
+
+        <script>
+            loadCommercial(function () {
+                require(['commercial/modules/creatives/template'])
+                    .then(function(
+                        Template
+                    ) {
+                        var adSlot = document.querySelector('.ad-slot--manual-inline');
+                        new Template(adSlot, {
+                            creative: 'manual-inline',
+                            Toneclass: 'commercial--tone-brand',
+                            component_title: 'The Guardian Bookshop',
+                            omniture_id: '[%OmnitureID%]',
+                            base_url: 'https://bookshop.theguardian.com/',
+                            offer_title: 'Title',
+                            offer_url: 'https://bookshop.theguardian.com/',
+                            offer_image: 'http://pagead2.googlesyndication.com/pagead/imgad?id=CICAgKCToPeYcRABGAEyCL27FJtXKuKj',
+                            offer_meta: 'Meta',
+                            offer_button: 'yes',
+                            clickMacro: '%%CLICK_URL_ESC%%'
+                        }).create().then(function () {
+                            adSlot.classList.add('ad-slot--rendered');
+                        });
+                      });
+                });
+            loadCommercial(function () {
+                require(['commercial/modules/creatives/commercial-component'])
+                    .then(function(
+                        CommercialComponent
+                    ) {
+                        var adSlot = document.querySelector('.ad-slot--inline-book');
+                        new CommercialComponent(adSlot, {
+                            type: 'book',
+                            isbn: '9781786070470',
+                            clickMacro: '%%CLICK_URL_ESC%%',
+                            omnitureId: '[%OmnitureID%]'
+                        }).create().then(function () {
+                            adSlot.classList.add('ad-slot--rendered');
+                        });
+                    });
+                });
+            loadCommercial(function () {
+                require(['commercial/modules/creatives/commercial-component'])
+                    .then(function(
+                        CommercialComponent
+                    ) {
+                        var adSlot = document.querySelector('.ad-slot--inline-event')
+                        new CommercialComponent(adSlot, {
+                            type: 'liveevents',
+                            id: '29479196069',
+                            clickMacro: '%%CLICK_URL_ESC%%',
+                            omnitureId: '[%OmnitureID%]'
+                        }).create().then(function () {
+                            adSlot.classList.add('ad-slot--rendered');
+                        });
+                    });
+                });
+        </script>
+    </article>
+
+    <div class="fc-container__inner">
+        <h2 class="test-page-head">
+            <a href="https://www.google.com/dfp/59666047#delivery/CreateCreativeTemplate/creativeTemplateId=10030287">
+                Merchandising: commercial component (books)
+            </a>
+        </h2>
+        <form class="js-merchandising-books-layout">
+            <label>Layout:
+                <select>
+                    <option value="standard" selected>Standard</option>
+                    <option value="prominent">Prominent</option>
+                </select>
+            </label>
+        </form>
+    </div>
+    <div class="fc-container fc-container--commercial">
+        <div class="js-merchandising-books ad-slot ad-slot--merchandising ad-slot--commercial-component"></div>
+    </div>
+    <script>
+        loadCommercial(function () {
+            require([
+                'bean',
+                'qwery',
+                'common/utils/$',
+                'commercial/modules/creatives/commercial-component'
+            ])
+                .then(function (
+                    bean,
+                    qwery,
+                    $,
+                    CommercialComponent
+                ) {
+                    var $merchandisingBooks = $('.js-merchandising-books');
+
+                    bean.on(qwery('.js-merchandising-books-layout')[0], 'change', function (event) {
+                        var commercialComponent = new CommercialComponent($merchandisingBooks[0], {
+                            type: 'books',
+                            layout: $(event.srcElement).val(),
+                            omnitureId: '[%OmnitureID%]',
+                            clickMacro: '%%CLICK_URL_ESC%%'
+                        });
+
+                        commercialComponent.postLoadEvents.books = function () {
+                            $merchandisingBooks.removeClass('lazyloaded');
+                        };
+
+                        commercialComponent.create();
+                    });
+
+                    bean.fire(qwery('.js-merchandising-books-layout select')[0], 'change');
+                });
+        });
+    </script>
+
+    <div class="fc-container__inner">
+        <h2 class="test-page-head">
+            <a href="https://www.google.com/dfp/59666047#delivery/CreateCreativeTemplate/creativeTemplateId=10022487">Merchandising: blended component</a>
+        </h2>
+    </div>
+    <div class="ad-slot ad-slot--merchandising ad-slot--commercial-component dfp-ad--merchandising-multi"></div>
+    <script>
+        loadCommercial(function () {
+            require(['commercial/modules/creatives/commercial-component'])
+                .then(function(
+                    CommercialComponent
+                ) {
+                new CommercialComponent(document.querySelector('.dfp-ad--merchandising-multi'), {
+                    type: 'multi',
+                    components: ['jobs', 'books', 'masterclasses'],
+                    slotIds: ['','','',''],
+                    clickMacro: '%%CLICK_URL_ESC%%',
+                    omnitureId: '[%OmnitureID%]'
+                }).create();
+            });
+        });
+    </script>
+
+    @Seq(
+        Map(
+            ("type", "single"),
+            ("creativeId", "10026447")
+        ),
+        Map(
+            ("type", "multiple"),
+            ("creativeId", "10023207")
+        )
+    ).map { component =>
+        <div class="fc-container__inner">
+            <h2 class="test-page-head">
+                <a href="https://www.google.com/dfp/59666047#delivery/CreateCreativeTemplate/creativeTemplateId=@component("creativeId")">
+                    Merchandising: cAPI @component("type")
+                </a>
+            </h2>
+            <form class="capi-@component("type")-paid-for-type">
+                <label>Type:
+                    <select>
+                        <option value="advertisement-feature" selected>Advertisement Feature</option>
+                        <option value="sponsored">Sponsored</option>
+                        <option value="foundation-supported">Foundation Supported</option>
+                    </select>
+                </label>
+            </form>
+        </div>
+        <div class="ad-slot ad-slot--merchandising ad-slot--commercial-component ad-slot--capi-@component("type")"></div>
+        <script>
+            loadCommercial(function () {
+                require([
+                    'bean',
+                    'qwery',
+                    'common/utils/$',
+                    'commercial/modules/creatives/commercial-component'
+                ])
+                    .then(function (
+                        bean,
+                        qwery,
+                        $,
+                        CommercialComponent
+                    ) {
+                        var $capiType = $('.ad-slot--capi-@component("type")');
+
+                        bean.on(qwery('.capi-@component("type")-paid-for-type select')[0], 'change', function (event) {
+                            var commercialComponent = new CommercialComponent($capiType[0], {
+                                type: 'capi@if(component("type") == "single"){Single}',
+                                t: ['p/43b2q','p/43945'],
+                                l: 'http://pagead2.googlesyndication.com/pagead/imgad?id=CICAgKDjnfPJbBABGAEyCHbj_OBIEKp8',
+                                ct: 'Led Zeppelin special',
+                                cl: 'http://theguardian.com/music/ledzeppelin',
+                                cal: 'http://theguardian.com/about',
+                                k: 'music/ledzeppelin',
+                                rmd: 'www.theguardina.com',
+                                rmt: 'Seemoreoverhere',
+                                af: $(event.srcElement).val(),
+                                clickMacro: '%%CLICK_URL_ESC%%',
+                                omnitureId: '[%OmnitureID%]'
+                            });
+
+                            var callbackName = 'capi@if(component("type") == "single"){Single}';
+                            var originalPostLoadEvents = commercialComponent.postLoadEvents[callbackName];
+                            commercialComponent.postLoadEvents[callbackName] = function (el) {
+                                originalPostLoadEvents && originalPostLoadEvents.call(commercialComponent, el);
+                                $capiType.removeClass('lazyloaded');
+                            };
+                            commercialComponent.create();
+                        });
+
+                        bean.fire(qwery('.capi-@component("type")-paid-for-type select')[0], 'change');
+                    });
+            });
+        </script>
+    }
+
+    @Seq(
+        Map(
+            ("id", "manual1"),
+            ("type", "single"),
+            ("creativeId", "10025607"),
+            ("args", Json.obj(
+                ("creative", "manual-single"),
+                ("toneClass",  "commercial--tone-brand"),
+                ("omnitureId", "[%omnitureid%]"),
+                ("baseUrl", "http://www.theguardian.com/technology/2014/nov/20/apple-beats-music-iphone-ipad-spotify"),
+                ("title", "title"),
+                ("viewAllText", "View all"),
+                ("offerTitle", "Scientists climb to bottom of Siberian sinkhole - in pictures"),
+                ("offerImage", "http://pagead2.googlesyndication.com/pagead/imgad?id=CICAgKDjk-jQkgEQARgBMghE750kQXQwJg"),
+                ("offerText", "A Russian research team including scientists, a medic and a professional climber has descended a giant sinkhole on the Yamal Peninsula in northern Siberia. Photographs by Vladimir Pushkarev/Siberian Times"),
+                ("offerUrl", "http://www.theguardian.com/technology/2014/nov/20/apple-beats-music-iphone-ipad-spotify"),
+                ("seeMoreUrl", "http://www.theguardian.com/technology/2014/nov/20/apple-beats-music-iphone-ipad-spotify"),
+                ("showCtaLink", "show-cta-link"),
+                ("offerLinkText", "See more"),
+                ("clickMacro", "%%CLICK_URL_ESC%%")
+            ))
+        ),
+        Map(
+            ("id", "multiple1"),
+            ("type", "multiple"),
+            ("creativeId", "10025847"),
+            ("args", Json.obj(
+                ("creative", "manual-multiple"),
+                ("title", "A Title"),
+                ("explainer", "Explainer text"),
+                ("base__url", "http://www.theguardian.com/uk"),
+                ("offerlinktext", "Offer link text"),
+                ("viewalltext", "View all text"),
+                ("offeramount", "offer-amount"),
+                ("relevance", "high"),
+                ("Toneclass", "commercial--tone-brand"),
+                ("prominent", "true"),
+                ("offer1title", "Offer 1 Title"),
+                ("offer1linktext", "Offer 1 Link Text"),
+                ("offer1url", "http://www.theguardian.com/uk"),
+                ("offer1meta", "Offer 1 Meta"),
+                ("offer1image", "http://www.catgifpage.com/gifs/247.gif"),
+                ("offer2title", "Offer 2 Title"),
+                ("offer2linktext", "Offer 2 Link Text"),
+                ("offer2url", "http://www.theguardian.com/uk"),
+                ("offer2meta", "Offer 1 Meta"),
+                ("offer2image", "http://www.catgifpage.com/gifs/247.gif"),
+                ("offer3title", "Offer 3 Title"),
+                ("offer3linktext", "Offer 3 Link Text"),
+                ("offer3url", "http://www.theguardian.com/uk"),
+                ("offer3meta", "Offer 1 Meta"),
+                ("offer3image", "http://www.catgifpage.com/gifs/247.gif"),
+                ("offer4title", "Offer 4 Title"),
+                ("offer4linktext", "Offer 4 Link Text"),
+                ("offer4url", "http://www.theguardian.com/uk"),
+                ("offer4meta", "Offer 1 Meta"),
+                ("offer4image", "http://www.catgifpage.com/gifs/247.gif"),
+                ("omnitureId", "[%OmnitureID%]"),
+                ("clickMacro", "%%CLICK_URL_ESC%%")
+            ))
+        ),
+        Map(
+            ("id", "multipleMembership"),
+            ("type", "multiple"),
+            ("creativeId", "10025847"),
+            ("args", Json.obj(
+                ("creative", "manual-multiple"),
+                ("base__url", "https://memebrship.theguardian.com"),
+                ("viewalltext", "Become a Supporter"),
+                ("title", "Events for foodies from Guardian Live"),
+                ("offeramount", "offer-amount"),
+                ("relevance", "high"),
+                ("Toneclass", "commercial--tone-membership"),
+                ("offer1title", "Offer 1 Title"),
+                ("offer1linktext", "Offer 1 Link Text"),
+                ("offer1url", "http://www.theguardian.com/uk"),
+                ("offer1meta", "Offer 1 Meta"),
+                ("offer1image", "http://www.catgifpage.com/gifs/247.gif"),
+                ("offer2title", "Offer 2 Title"),
+                ("offer2linktext", "Offer 2 Link Text"),
+                ("offer2url", "http://www.theguardian.com/uk"),
+                ("offer2meta", "Offer 1 Meta"),
+                ("offer2image", "http://www.catgifpage.com/gifs/247.gif"),
+                ("offer3title", "Offer 3 Title"),
+                ("offer3linktext", "Offer 3 Link Text"),
+                ("offer3url", "http://www.theguardian.com/uk"),
+                ("offer3meta", "Offer 1 Meta"),
+                ("offer3image", "http://www.catgifpage.com/gifs/247.gif"),
+                ("offer4title", "Offer 4 Title"),
+                ("offer4linktext", "Offer 4 Link Text"),
+                ("offer4url", "http://www.theguardian.com/uk"),
+                ("offer4meta", "Offer 1 Meta"),
+                ("offer4image", "http://www.catgifpage.com/gifs/247.gif"),
+                ("omnitureId", "[%OmnitureID%]"),
+                ("clickMacro", "%%CLICK_URL_ESC%%")
+            ))
+        )
+    ).map { component =>
+        <div class="fc-container__inner">
+            <h2 class="test-page-head">
+                <a href="https://www.google.com/dfp/59666047#delivery/CreateCreativeTemplate/creativeTemplateId=@component("creativeId")">
+                    Merchandising: manual @component("type")
+                </a>
+            </h2>
+        </div>
+        <div id="@component("id")" class="ad-slot ad-slot--merchandising ad-slot--commercial-component ad-slot--@component("type")-manual"></div>
+        <script>
+            @component("args") match {
+                case args: JsObject => {
+                    loadCommercial(function () {
+                        require(['commercial/modules/creatives/template'])
+                            .then(function (Template) {
+                                new Template(document.querySelector('#@component("id")'), @Html(Json.stringify(args)))
+                                    .create();
+                        });
+                    });
+                }
+                case _ => { }
+            }
+        </script>
+    }
+
+</div>
+}

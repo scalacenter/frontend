@@ -1,0 +1,115 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# For dev machines
+GET         /assets/*path                                                       dev.DevAssetsController.at(path)
+
+GET        /_healthcheck                                                        controllers.HealthCheck.healthCheck()
+
+GET        /sitemaps/news.xml                                                   controllers.SiteMapController.renderNewsSiteMap()
+GET        /sitemaps/video.xml                                                  controllers.SiteMapController.renderVideoSiteMap()
+
+GET        /email-newsletters                                                   controllers.SignupPageController.renderNewslettersPage()
+
+GET        /survey/:formName/show                                               controllers.SurveyPageController.renderFormStackSurvey(formName)
+GET        /survey/thankyou                                                     controllers.SurveyPageController.thankYou()
+
+# NOTE: Leave this as it is, otherwise we don't render /crosswords/series/prize, for example.
+GET        /crosswords/$crosswordType<cryptic|quick|quiptic|prize|everyman|azed|special|genius|speedy|weekend>/:id.svg       controllers.CrosswordPageController.thumbnail(crosswordType: String, id: Int)
+GET        /crosswords/$crosswordType<cryptic|quick|quiptic|prize|everyman|azed|special|genius|speedy|weekend>/:id           controllers.CrosswordPageController.crossword(crosswordType: String, id: Int)
+GET        /crosswords/$crosswordType<cryptic|quick|quiptic|prize|everyman|special|genius|speedy|weekend>/:id/print          controllers.CrosswordPageController.printableCrossword(crosswordType: String, id: Int)
+GET        /crosswords/accessible/$crosswordType<cryptic|quick|quiptic|prize|everyman|azed|special|genius|speedy|weekend>/:id     controllers.CrosswordPageController.accessibleCrossword(crosswordType: String, id: Int)
+
+# Crosswords search
+GET            /crosswords/search                                                                                                controllers.CrosswordSearchController.search()
+GET            /crosswords/lookup                                                                                                controllers.CrosswordSearchController.lookup()
+
+# Email paths
+GET        /email/form/$emailType<article|footer|plain|plaindark|plaintone>/:listId       controllers.EmailSignupController.renderForm(emailType: String, listId: Int)
+GET        /email/:result                                                       controllers.EmailSignupController.subscriptionResult(result: String)
+POST       /email                                                               controllers.EmailSignupController.submit()
+OPTIONS    /email                                                               controllers.EmailSignupController.options()
+
+GET        /index/subjects                                                      controllers.TagIndexController.keywords()
+GET        /index/subjects/*index                                               controllers.TagIndexController.keyword(index)
+GET        /index/contributors                                                  controllers.TagIndexController.contributors()
+GET        /index/contributors/*contributor                                     controllers.TagIndexController.contributor(contributor)
+
+GET        /embed/video/*path                                                   controllers.EmbedController.render(path)
+GET        /embed/atom/:atomType/:id                                            controllers.AtomPageController.render(atomType: String, id: String, isJsEnabled: Boolean = true, hasVerticalScrollbar: Boolean = false, inApp: Boolean = false)
+GET        /embed/atom/:atomType/:id/nojs                                       controllers.AtomPageController.render(atomType: String, id: String, isJsEnabled: Boolean = false, hasVerticalScrollbar: Boolean = false, inApp: Boolean = false)
+GET        /embed/atom/:atomType/:id/nojs/scroll-y                              controllers.AtomPageController.render(atomType: String, id: String, isJsEnabled: Boolean = false, hasVerticalScrollbar: Boolean = true, inApp: Boolean = false)
+GET        /embed/atom/:atomType/:id/inapp                                      controllers.AtomPageController.render(atomType: String, id: String, isJsEnabled: Boolean = true, hasVerticalScrollbar: Boolean = true, inApp: Boolean = true)
+POST       /story-questions/answers/signup                                      controllers.AtomPageController.signup()
+OPTIONS    /story-questions/answers/signup                                      controllers.AtomPageController.options()
+
+# Share counts
+GET        /sharecount/*path.json                                               controllers.ShareCountController.fetch(path)
+
+# Preferences
+GET        /preferences                                                         controllers.PreferencesController.indexPrefs()
+
+# opt-in/out routes
+GET        /opt/$choice<in|out|delete>/:feature                                 controllers.OptInController.handle(feature, choice)
+GET        /opt/reset                                                           controllers.OptInController.reset()
+
+# Web App paths
+GET        /service-worker.js                                                   controllers.WebAppController.serviceWorker()
+GET        /2015-06-24-manifest.json                                            controllers.WebAppController.manifest()
+
+# Newspaper pages
+GET        /theguardian                                                                     controllers.NewspaperController.latestGuardianNewspaper()
+GET        /theobserver                                                                     controllers.NewspaperController.latestObserverNewspaper()
+GET        /$path<theguardian|theobserver>/$year<\d\d\d\d>/$month<\w\w\w>/$day<\d\d>        controllers.NewspaperController.newspaperForDate(path, day, month, year)
+GET        /$path<theguardian|theobserver>/$year<\d\d\d\d>/$month<\w\w\w>/$day<\d\d>/all    controllers.NewspaperController.allOn(path, day, month, year)
+
+# Atoms
+POST       /atom/quiz/:id/*path                                                 controllers.QuizController.submit(id, path)
+
+GET        /$path<.+/\d\d\d\d/\w\w\w/\d\d>                                      controllers.AllIndexController.on(path)
+GET        /$path<.+>/latest                                                    controllers.LatestIndexController.latest(path)
+GET        /$path<.+>/latest/email                                              controllers.LatestIndexController.latest(path)
+GET        /$path<.+>/$year<\d\d\d\d>/$month<\w\w\w>/$day<\d\d>/all             controllers.AllIndexController.allOn(path, day, month, year)
+GET        /$path<.+>/$year<\d\d\d\d>/$month<\w\w\w>/$day<\d\d>/altdate         controllers.AllIndexController.altDate(path, day, month, year)
+GET        /$path<.+>/all                                                       controllers.AllIndexController.all(path)
+
+# Gallery paths
+GET        /$path<[\w\d-]*(/[\w\d-]*)?/gallery/.*>/lightbox.json                controllers.GalleryController.lightboxJson(path)
+GET        /$path<[\w\d-]*(/[\w\d-]*)?/gallery/.*>.json                         controllers.GalleryController.renderJson(path)
+GET        /$path<[\w\d-]*(/[\w\d-]*)?/gallery/.*>                              controllers.GalleryController.render(path)
+
+# Image Content paths
+GET        /$path<[\w\d-]*(/[\w\d-]*)?/(cartoon|picture|graphic)/.*>.json       controllers.ImageContentController.renderJson(path)
+GET        /$path<[\w\d-]*(/[\w\d-]*)?/(cartoon|picture|graphic)/.*>            controllers.ImageContentController.render(path)
+
+# Audio and Video paths
+GET        /$path<[\w\d-]*(/[\w\d-]*)?/(video|audio)/.*>/info.json              controllers.MediaController.renderInfoJson(path)
+GET        /$path<[\w\d-]*(/[\w\d-]*)?/(video|audio)/.*>.json                   controllers.MediaController.renderJson(path)
+GET        /$path<[\w\d-]*(/[\w\d-]*)?/(video|audio)/.*>                        controllers.MediaController.render(path)
+
+# Interactive service worker
+GET        /$path<[\w\d-]*(/[\w\d-]*)+>/$file<interactive(-service)?-worker.js>           controllers.InteractiveController.proxyInteractiveWebWorker(path, file)
+
+# Interactive paths
+GET        /$path<[\w\d-]*(/[\w\d-]*)?/(interactive|ng-interactive)/.*>.json    controllers.InteractiveController.renderInteractiveJson(path)
+GET        /$path<[\w\d-]*(/[\w\d-]*)?/(interactive|ng-interactive)/.*>         controllers.InteractiveController.renderInteractive(path)
+
+# Interactive test (removing ng-interactive in the url)
+GET        /$path<info/2017/jul/26/interactive-test>                            controllers.InteractiveController.renderInteractive(path)
+
+# Short urls with campaign codes
+GET        /$shortCode<p/[\w]+>                                                 controllers.ShortUrlsController.redirectShortUrl(shortCode)
+GET        /$shortCode<p/[\w]+>/:campaignCode                                   controllers.ShortUrlsController.fetchCampaignAndRedirectShortCode(shortCode, campaignCode)
+
+# Index pages for tags
+GET        /$path<[\w\d-]*(/[\w\d-]*)?(/[\w\d-]*)?>/trails.json                 controllers.IndexController.renderTrailsJson(path)
+GET        /$path<[\w\d-]*(/[\w\d-]*)?(/[\w\d-]*)?>/trails                      controllers.IndexController.renderTrails(path)
+GET        /$path<[\w\d-]*(/[\w\d-]*)?(/[\w\d-]*)?>.json                        controllers.IndexController.renderJson(path)
+GET        /$path<[\w\d-]*(/[\w\d-]*)?(/[\w\d-]*)?>                             controllers.IndexController.render(path)
+
+# Tag combiners
+GET        /$leftSide<[^+]+>+*rightSide                                         controllers.IndexController.renderCombiner(leftSide, rightSide)
+
+# Google site verification
+GET        /google$account<[\w\d-]*>.html                                       controllers.SiteVerificationController.googleSiteVerify(account)

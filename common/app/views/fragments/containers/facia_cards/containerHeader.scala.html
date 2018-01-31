@@ -1,0 +1,27 @@
+@(containerDefinition: layout.FaciaContainer, frontProperties: model.FrontProperties)(implicit request: RequestHeader)
+
+@import fragments.containers.facia_cards.{dateHeadline, descriptionHeadline, standardHeaderMeta}
+@import fragments.nav.treats
+@import layout.{DescriptionMetaHeader, LoneDateHeadline, MetaDataHeader}
+
+@containerDefinition.customHeader.map { customHeader =>
+    <div class="fc-container__header js-container__header">
+        @customHeader match {
+            case metaDataHeader: MetaDataHeader => {
+                @dateHeadline(metaDataHeader.dateHeadline, containerDefinition.dateLink)
+            }
+
+            case dateHeader: LoneDateHeadline => {
+                @dateHeadline(dateHeader.get, containerDefinition.dateLink)
+            }
+
+            case descriptionHeader: DescriptionMetaHeader => {
+                @descriptionHeadline(containerDefinition, frontProperties, descriptionHeader.description)
+            }
+        }
+    </div>
+}.getOrElse {
+    @standardHeaderMeta(containerDefinition, frontProperties)
+}
+
+@treats(containerDefinition, frontProperties)

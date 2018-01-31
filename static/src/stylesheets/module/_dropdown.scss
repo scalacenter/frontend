@@ -1,0 +1,94 @@
+// Apply this if you would like to use the standard dropdown style
+// If you have other styles, but would like to maintain the functionality,
+// just apply .dropdown
+.dropdown-styled {
+    border-top: 1px solid $neutral-4;
+    position: relative;
+
+    .dropdown__toggle,
+    .dropdown__toggle-label {
+        @include fs-textSans(1);
+        top: ($gs-baseline/3)*2;
+        cursor: pointer;
+        position: absolute;
+    }
+
+    .dropdown__toggle {
+        position: absolute;
+        right: 0;
+    }
+
+    .dropdown__toggle-label {
+        right: $gs-gutter;
+    }
+
+    .dropdown__button {
+        padding: $gs-baseline/2 0;
+        color: $neutral-1;
+        text-align: left;
+
+        .control {
+            border-color: $neutral-5;
+            float: right;
+            position: relative;
+        }
+
+        .inline-icon {
+            background-color: $neutral-2;
+
+            svg {
+                display: block;
+            }
+        }
+    }
+
+    .dropdown__content {
+        transition: margin .1s linear, height .2s linear;
+    }
+
+    &.dropdown--active {
+        .dropdown__button .inline-icon {
+            transform: rotate(180deg);
+        }
+        .dropdown__content {
+            margin-bottom: $gs-baseline;
+            margin-top: $gs-baseline;
+        }
+    }
+}
+
+.dropdown__content {
+    transition: height .2s linear;
+}
+
+.dropdown__toggle:checked + .dropdown__content,
+.dropdown--active .dropdown__content,
+.dropdown--animated.dropdown--active .dropdown__content {
+    position: static;
+    visibility: visible;
+    pointer-events: all;
+    display: block;
+    height: auto;
+}
+
+.dropdown__content {
+    display: none;
+    height: 0;
+    overflow: hidden;
+}
+
+.dropdown--animated .dropdown__content {
+    display: block;
+    overflow: hidden;
+    position: fixed;
+    top: -9999em;
+    left: -9999em;
+    visibility: hidden;
+    pointer-events: none;
+    transition: height .2s linear;
+    /*
+    moving the dropdown off-layout instead of hiding it
+    lets dropdown.js retrieve a close enough height
+    for the animation
+    */
+}

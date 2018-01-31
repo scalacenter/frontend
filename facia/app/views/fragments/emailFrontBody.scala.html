@@ -1,0 +1,259 @@
+@import layout.{EmailCardStyle, EmailHidden, EmailFreeText, EmailFaciaCard}
+@import layout.EmailLayouts
+@import layout.{EmailContentContainer, LiveIntentMarquee, LiveIntentMPU, LiveIntentSafeRTB}
+@()(implicit page: model.PressedPage, request: RequestHeader)
+
+@import com.gu.commercial.branding.Branding
+@import implicits.ItemKickerImplicits._
+@import layout.ContentCard
+@import model.EmailAddons.EmailContentType
+@import model.pressed.{ExternalLink, Feature}
+@import views.support.EmailHelpers.{icon, imgFromCard, imgForFront, classesForCard}
+@import views.support.RemoveOuterParaHtml
+@import fragments.email._
+@import common.LinkTo
+
+@headline(card: ContentCard, isLarge: Boolean = false, isLast: Boolean) = {
+
+    @row(Seq("headline")) {
+        <a @Html(card.header.url.hrefWithRel) class="fc-link">
+            @card.header.kicker.map { kicker =>
+                <span class="fc__kicker">@Html(kicker.kickerHtml)</span>
+                <span class="kicker-separator">/</span>
+            }
+
+            @if(card.header.isGallery) { @icon("gallery", isLarge) }
+            @if(card.header.isAudio) { @icon("podcast", isLarge) }
+            @if(card.header.isVideo) { @icon("video", isLarge) }
+
+            @if(card.header.quoted) {
+                @card.cardStyle match {
+                    case Feature => { @icon("quote-feature", isLarge) }
+                    case _ => { @icon("quote", isLarge) }
+                }
+            }
+            @RemoveOuterParaHtml(card.header.headline)
+        </a>
+    }
+    @if(card.header.quoted) {
+        @card.bylineText.map { byline => @row(Seq("byline")){@byline} }
+    }
+    @card.starRating.map { numberOfStars =>
+        @row(Seq("review-stars")) {
+            @for(i <- 0 to 4) {
+                @defining(if(i < numberOfStars) "golden" else "grey") { positiveOrNegative =>
+                    @icon("star-" + positiveOrNegative, isLarge)
+                }
+            }
+        }
+    }
+    @if(isLast) {
+        @row(Seq("fc__pad")) { }
+    }
+}
+
+@trailText(card: ContentCard) = {
+    @card.trailText.map { trailText =>
+        @row(Seq("trail-text")) {
+            <a @Html(card.header.url.hrefWithRel) class="fc-link">@Html(trailText)</a>
+        }
+    }
+}
+
+@headlineAndTrailWithCutout(card: ContentCard, withImage: Boolean) = {
+    @headline(card, isLarge = withImage, isLast = false)
+    @trailText(card)
+}
+
+
+@faciaCardWithTrailText(card: ContentCard, withImage: Boolean, largeHeadline: Boolean, isBranded: Boolean) = {
+    @faciaCard(classesForCard(card, withImage), isBranded) {
+        @if(withImage) {
+            @row(Seq("no-pad")){@imgFromCard(card)}
+        }
+        @if(card.header.quoted) {
+            @headlineAndTrailWithCutout(card, withImage)
+        } else {
+            @headline(card, isLarge = largeHeadline, isLast = false)
+            @trailText(card)
+        }
+    }
+}
+
+@faciaCardWithoutTrailText(card: ContentCard, withImage: Boolean, largeHeadline: Boolean, isBranded: Boolean) = {
+    @imgFromCard(card, 5).filter(_ => withImage).fold {
+        @faciaCard(classesForCard(card), isBranded) {
+            @headline(card, largeHeadline, isLast = true)
+        }
+    } { img =>
+        @faciaCard(classesForCard(card), isBranded) {
+            <tr valign="top">
+                <td class="left-col"><table>@headline(card, isLast = true)</table></td>
+                <td class="right-col no-pad">@img</td>
+            </tr>
+        }
+    }
+}
+
+@freeText(text: String) = {
+    @fullRow(Seq("free-text"))(Html(text))
+}
+
+@renderCard(card: ContentCard, cardStyle: EmailCardStyle, isBranded: Boolean) = {
+    @cardStyle match {
+        case EmailHidden => { }
+        case EmailFreeText => { @freeText(card.header.headline) }
+        case layoutStyle: EmailFaciaCard => {
+            @card.cardStyle match {
+                case ExternalLink => {
+                    @faciaCardWithoutTrailText(
+                        card = card,
+                        withImage = false,
+                        largeHeadline = false,
+                        isBranded = isBranded
+                    )
+                }
+                case _ => {
+                    @if(layoutStyle.trailText) {
+                        @faciaCardWithTrailText(
+                            card = card,
+                            withImage = layoutStyle.image,
+                            largeHeadline = layoutStyle.largeHeadline,
+                            isBranded = isBranded
+                        )
+                    } else {
+                        @faciaCardWithoutTrailText(
+                            card = card,
+                            withImage = layoutStyle.image,
+                            largeHeadline = layoutStyle.largeHeadline,
+                            isBranded = isBranded
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@fullRow(Seq()) {
+    @imgForFront(page.banner, page.email.map(_.name))
+}
+
+@renderContentContainer(collection: EmailContentContainer, collectionIndex: Int) = {
+    @containerTitle((if(collectionIndex > 0) Seq("ct--not-top") else Nil) ++ (if (collection.branding.isDefined) Seq("ct-branded") else Nil)) {
+
+        @collection.href.map { href =>
+            <a class="ct-link" href="@LinkTo {/@Html(href)}">@collection.displayName</a>
+        }.getOrElse {
+            @collection.displayName
+        }
+    }
+
+    @for(collectionBranding <- collection.branding) { @collectionBranding match {
+        case branding: Branding => {
+            @containerBranding(branding, collection.href)
+        }
+        case _ => { }
+    }}
+
+    @collection.cards.zipWithIndex.map { case (card, cardIndex) =>
+        @if(cardIndex == 0) {
+            @renderCard(card, EmailLayouts.layoutByName(collection.collectionType).firstCard, collection.branding.isDefined)
+        } else {
+            @renderCard(card, EmailLayouts.layoutByName(collection.collectionType).otherCards, collection.branding.isDefined)
+        }
+    }
+}
+
+@renderMarquee(marquee: LiveIntentMarquee) = {
+    <table align="center" border="0" cellpadding="0" cellspacing="0" style="margin-left:auto; margin-right:auto;">
+        <tr>
+            <td colspan="2">
+                <a href="http://li.theguardian.com/click?s=@{marquee.ids._1}&layout=marquee&li=@{marquee.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%" rel="nofollow">
+                    <img border="0" src="http://li.theguardian.com/imp?s=@{marquee.ids._1}&layout=marquee&li=@{marquee.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%" style="display: block; width:100%; height:auto;" width="500">
+                </a>
+            </td>
+        </tr>
+        <tr style="display:block; height:1px; line-height:1px;">
+            <td><img height="1" src="http://li.theguardian.com/imp?s=@{marquee.ids._2}&sz=1x1&li=@{marquee.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%" width="10"></td>
+            <td><img height="1" src="http://li.theguardian.com/imp?s=@{marquee.ids._3}&sz=1x1&li=@{marquee.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%" width="10"></td>
+        </tr>
+        <tr>
+            <td align="left">
+                <a href="http://li.theguardian.com/click?s=@{marquee.ids._4}&sz=116x15&li=@{marquee.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%" rel="nofollow">
+                    <img border="0" src="http://li.theguardian.com/imp?s=@{marquee.ids._4}&sz=116x15&li=@{marquee.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%">
+                </a>
+            </td>
+            <td align="right">
+                <a href="http://li.theguardian.com/click?s=@{marquee.ids._5}&sz=69x15&li=@{marquee.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%" rel="nofollow">
+                    <img border="0" src="http://li.theguardian.com/imp?s=@{marquee.ids._5}&sz=69x15&li=@{marquee.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%">
+                </a>
+            </td>
+        </tr>
+    </table>
+}
+
+@renderMPU(mpu: LiveIntentMPU) = {
+    <table style="background-color: #f6f6f6; margin-left: 0; margin-top: 0; margin-bottom: 10px; text-align: center; width: 100%; vertical-align: top; padding: 0">
+        <tr>
+            <td style="margin: 0; padding: 0; width: 50%"></td>
+            <td style="margin: 0; padding: 0; width: 300px">
+                <table style="text-align: left; padding: 0px; width: 300px; margin: 0 auto">
+                    <tr><td style="background-color: #f6f6f6; font-size: 12px; height:20px; width: 300px; border-top: 1px solid #dfdfdf; color: #6e6e6e; text-align: left; font-family: Helvetica,Arial,sans-serif">Advertisement</td></tr>
+                </table>
+                <table border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td colspan="2">
+                            <a href="http://li.theguardian.com/click?s=@{mpu.ids._1}&sz=300x250&li=@{mpu.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%" rel="nofollow" style="display: block; width: 300px; height: 250px;">
+                                <img border="0" height="250" src="http://li.theguardian.com/imp?s=@{mpu.ids._1}&sz=300x250&li=@{mpu.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%" width="300">
+                            </a>
+                        </td>
+                    </tr>
+                    <tr style="display:block; height:1px; line-height:1px;">
+                        <td><img height="1" src="http://li.theguardian.com/imp?s=@{mpu.ids._2}&sz=1x1&li=@{mpu.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%" width="10"></td>
+                        <td><img height="1" src="http://li.theguardian.com/imp?s=@{mpu.ids._3}&sz=1x1&li=@{mpu.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%" width="10"></td>
+                    </tr>
+                    <tr>
+                        <td align="left">
+                            <a href="http://li.theguardian.com/click?s=@{mpu.ids._4}&sz=116x15&li=@{mpu.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%" rel="nofollow">
+                                <img border="0" src="http://li.theguardian.com/imp?s=@{mpu.ids._4}&sz=116x15&li=@{mpu.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%">
+                            </a>
+                        </td>
+                        <td align="right">
+                            <a href="http://li.theguardian.com/click?s=@{mpu.ids._5}&sz=69x15&li=@{mpu.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%" rel="nofollow">
+                                <img border="0" src="http://li.theguardian.com/imp?s=@{mpu.ids._5}&sz=69x15&li=@{mpu.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%">
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td style="margin: 0; padding: 0; width: 50%"></td>
+        </tr>
+    </table>
+}
+
+@renderSafeRTB(safeRTB: LiveIntentSafeRTB) = {
+    <table border="0" cellpadding="0" cellspacing="0" width="40">
+        <tbody>
+            <tr>
+                @safeRTB.ids.map { id =>
+                    <td><img border="0" height="6" src="http://li.theguardian.com/imp?s=@id&sz=2x1&li@{safeRTB.newsletterId}&m=%%=v(@@hashedEmail)=%%&p=%%jobid%%" width="2"></td>
+                }
+            </tr>
+        </tbody>
+    </table>
+}
+
+@layout.CollectionEmail.fromPressedPage(page).collections.zipWithIndex.map {
+    case (collection: EmailContentContainer, index) => { @renderContentContainer(collection, index) }
+    case (marquee: LiveIntentMarquee, _) => { @renderMarquee(marquee) }
+    case (mpu: LiveIntentMPU, _) => { @renderMPU(mpu) }
+    case (safeRTB: LiveIntentSafeRTB, _) => { @renderSafeRTB(safeRTB) }
+}
+
+@page.frontProperties.onPageDescription.map { description =>
+    @fullRow(Seq("message")) {
+        @Html(description)
+    }
+}

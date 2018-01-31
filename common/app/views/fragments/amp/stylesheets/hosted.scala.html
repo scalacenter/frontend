@@ -1,0 +1,56 @@
+@(mainPicture: String, ctaImage: Option[String], brandColour: String)
+
+.hosted-tone {
+    color: @brandColour;
+}
+
+.hosted-tone-bg {
+    background-color: @brandColour;
+}
+
+.hosted-tone-btn {
+    color: @brandColour;
+    border: 1px solid @brandColour;
+}
+
+.hosted-gallery-page .hosted-tone-btn,
+.hosted__banner .hosted-tone-btn,
+.hosted-tone-btn:focus {
+    background-color: @brandColour;
+}
+
+.hosted-page .hosted__link {
+    color: @brandColour;
+}
+
+.survey-container .survey-text__header {
+    background-color: @brandColour;
+}
+
+.hosted__header .survey-container.survey-container::before {
+    border-bottom-color: @brandColour;
+}
+
+.hosted-article-page p.intro + p::first-letter {
+    background-color: @brandColour;
+}
+
+.from-content-api ul > li:before {
+    background-color: @brandColour;
+}
+
+.hosted__banner {
+    background-image: url(@ctaImage);
+}
+
+.hosted-article-page .media-primary.media-primary--showcase {
+    background-image: url(@mainPicture);
+}
+
+.hosted-article-page blockquote {
+    border-left: 20px solid @brandColour
+}
+
+.hosted-article-page blockquote .inline-hosted-quote__svg {
+    fill: @brandColour
+}

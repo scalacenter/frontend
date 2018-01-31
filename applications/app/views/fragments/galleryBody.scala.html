@@ -1,0 +1,120 @@
+@import common.LinkTo
+@import layout.ContentWidths.GalleryMedia
+@import model.{GalleryPage, ImageAsset, ImageElement}
+@import views.support.Commercial.isPaidContent
+@import views.support.TrailCssClasses.toneClass
+@import views.support.`package`.Seq2zipWithRowInfo
+@import views.support.{GalleryCaptionCleaner, RenderClasses}
+
+@import model.DotcomContentType
+@(page: GalleryPage)(implicit request: RequestHeader, context: model.ApplicationContext)
+
+<div class="gallery__main-content">
+
+    @* Manually placing tonal--tone-media as temporary fix to ensute special report tones have it *@
+    <article id="article" class="@RenderClasses(
+            Map("content--paidgallery" -> isPaidContent(page)),
+            "content", "content--media", "content--gallery", "tonal", "content--immersive", "tonal--tone-media", s"tonal--${toneClass(page.item)}"
+        )"
+        itemscope itemtype="@page.item.metadata.schemaType" role="main">
+
+        @fragments.galleryHeader(page)
+
+        <div class="@RenderClasses(
+                    Map("l-side-margins--paidgallery" -> isPaidContent(page)),
+                    "l-side-margins", "l-side-margins--media", "l-side-margins--gallery"
+                )">
+            <div class="content__main tonal__main tonal__main--@toneClass(page.item)">
+                <div class="gs-container gallery__divider">
+                    <div class="content__main-column content__main-column--gallery">
+                        @fragments.witnessCallToAction(page.item.content)
+                        <ul class="gallery">
+                            @page.item.lightbox.largestCrops.zipWithRowInfo.map { case (image, row) =>
+                                @galleryItem(4, image, row.rowNum, page.item.lightbox.imageContainer(row.rowNum - 1))
+                            }
+                        </ul>
+                        @fragments.witnessCallToAction(page.item.content)
+                        @fragments.submeta(page.item)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    @if(page.item.content.showInRelated && !isPaidContent(page)) {
+        <div class="@RenderClasses(
+                    Map("l-side-margins--paidgallery" -> isPaidContent(page)),
+                    "l-side-margins", "l-side-margins--media", "l-side-margins--gallery"
+                )">
+            <div class="gallery__most-popular facia-container fc-container fc-container--media hide-on-childrens-books-site js-gallery-most-popular tonal--@toneClass(page.item)">
+                <div class="fc-container__inner">
+                    <div class="fc-container__header">
+                        <h2 class="fc-container__header__title">
+                            <a class="most-viewed-no-js tone-colour" href="@LinkTo{/gallery/most-viewed}" data-link-name="Most viewed galleries">More galleries</a>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<div class="l-side-margins">
+    @fragments.contentFooter(page.item, page.related, "media", isPaidContent(page))
+</div>
+
+@galleryItem(adInterval: Int, image: ImageAsset, rowNum: Int, imageElement: ImageElement) = {
+
+    <li id="img-@rowNum" class="gallery__item js-gallery-item" data-link-name="Gallery item | @rowNum">
+        <figure itemscope itemtype="http://schema.org/ImageObject">
+
+            <div class="gallery__figcaption">
+                @image.caption.map { caption =>
+                    <div class="gallery__caption" itemprop="caption">@Html(GalleryCaptionCleaner(caption))</div>
+                }
+                @if(image.displayCredit) {
+                    @image.credit.map { credit =>
+                        <p class="gallery__credit" itemprop="author">@credit</p>
+                    }
+                }
+
+                @fragments.share.blockLevelSharing(
+                    "img-" + rowNum.toString,
+                    page.item.sharelinks.elementShares("img-" + rowNum.toString, image.path),
+                    page.item.metadata.contentType.getOrElse(DotcomContentType.Unknown),
+                    isNewGallery = true
+                )
+            </div>
+
+            @defining(
+                if(image.width >= image.height) {"--landscape"} else {"--portrait"}
+            ) { orientation =>
+                <a class="gallery__img-container gallery__img-container@orientation js-gallerythumbs"
+                    @*
+                     * This ensures that the image height never goes above 96vh
+                     *@
+                    style="max-width: calc(@image.ratioDouble * 96vh)"
+                    href="@LinkTo{@page.item.metadata.url#img-@rowNum}"
+                    data-link-name="Launch Gallery Lightbox" data-is-ajax>
+                    @fragments.image(
+                        imageElement.images,
+                        Seq("gallery__img", s"gallery__img$orientation"),
+                        GalleryMedia.inline,
+                        image.altText.getOrElse("")
+                    )
+                    @fragments.inlineSvg("expand-image", "icon", List("centered-icon", "rounded-icon", "gallery__fullscreen", "modern-visible", "hide-until-tablet"))
+                </a>
+            }
+        </figure>
+    </li>
+
+    @if(!page.item.content.shouldHideAdverts && rowNum % adInterval == 0) {
+        <li class="gallery__item gallery__item--advert">
+            <div class="gallery__img-container">
+                @defining(rowNum / adInterval) { inlineId =>
+                    @gallerySlot(inlineId)
+                    @gallerySlot(inlineId - 1, isMobile = true)
+                }
+            </div>
+        </li>
+    }
+}

@@ -1,0 +1,108 @@
+html {
+    overflow-y: scroll;
+
+    &.iframed {
+        overflow-y: auto;
+    }
+
+    &.iframed--overflow-hidden {
+        overflow: hidden;
+    }
+}
+
+body {
+    background-color: #ffffff;
+}
+.is-modern .has-membership-access-requirement {
+    visibility: hidden !important;
+}
+
+::selection {
+    background: rgba($news-main-2, .4);
+}
+
+/**
+ * Breakpoint definition for JS - see https://github.com/JoshBarr/on-media-query
+ */
+head {
+    font-family: 'mobile';
+
+    @include mq(mobileLandscape) {
+        font-family: 'mobileLandscape';
+    }
+    @include mq(tablet) {
+        font-family: 'tablet';
+    }
+    @include mq(desktop) {
+        font-family: 'desktop';
+    }
+    @include mq(leftCol) {
+        font-family: 'leftCol';
+    }
+    @include mq(wide) {
+        font-family: 'wide';
+    }
+}
+body:after {
+    @include u-h;
+
+    @include mq(mobileLandscape) {
+        content: 'mobileLandscape';
+    }
+    @include mq(tablet) {
+        content: 'tablet';
+    }
+    @include mq(desktop) {
+        content: 'desktop';
+    }
+    @include mq(leftCol) {
+        content: 'leftCol';
+    }
+    @include mq(wide) {
+        content: 'wide';
+    }
+
+    content: 'mobile';
+}
+
+.dateline {
+    @include fs-textSans(2);
+
+    @include mq(tablet) {
+        @include fs-textSans(3, true);
+    }
+
+    color: $neutral-2;
+
+    i {
+        vertical-align: baseline;
+    }
+}
+
+.relative-timestamp {
+    display: block;
+    color: $neutral-2;
+    margin: 0;
+}
+
+.relative-timestamp span {
+    display: inline-block;
+}
+
+.relative-timestamp__icon {
+    vertical-align: -2px;
+}
+
+ol,
+ul {
+    list-style-position: inside;
+}
+
+/* disable 300ms delay for 'clicks' on mobile */
+/* see: https://webkit.org/blog/5610/more-responsive-tapping-on-ios/ */
+a,
+button,
+input[type='button'],
+input[type='submit'] {
+    touch-action: manipulation;
+}

@@ -1,0 +1,11 @@
+@(trails: Seq[model.pressed.PressedContent], numItemsVisible: Int = 5)(implicit request: RequestHeader)
+
+@import views.support.Seq2zipWithRowInfo
+
+<ul class="u-unstyled">
+    @trails.take(numItemsVisible).zipWithRowInfo.map{ case (trail, info) =>
+        <li class="headline-list__item">
+            @fragments.trails.link(trail, info.rowNum)
+        </li>
+    }
+</ul>

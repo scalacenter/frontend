@@ -1,0 +1,284 @@
+// =============================================================================
+// Global variables
+// =============================================================================
+
+// Be careful of Sass variable scope
+// Note: Sass 3.3.0 adds Local and local vars
+// http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html#variables
+
+
+// Browser support
+// =============================================================================
+
+$old-ie:      false !default;
+$svg-support: true !default;
+$browser-supports-columns: not $old-ie !default;
+$browser-supports-flexbox: true !default;
+$guss-rem-baseline: 16px;
+
+
+// Layout dimensions
+// =============================================================================
+
+$inArticleInlineImgWidth: 114px;
+$headerHeight: 36px;
+
+@import 'pasteup/palette/src';
+@import 'pasteup/grid-system/src';
+
+$right-column:     gs-span(4);
+$left-column:      gs-span(2); // Grows to 3 columns on wide viewports
+$left-column-wide: gs-span(3);
+
+// Breakpoints
+// =============================================================================
+
+// Add breakpoints and tweakpoints here
+// To add custom breakpoints directly inside of a component,
+// see https://github.com/guardian/sass-mq#adding-custom-breakpoints
+
+// Name your breakpoints in a way that creates a ubiquitous language
+// across team members. It will improve communication between
+// stakeholders, designers, developers, and testers.
+
+// NB. If these change, please update:
+//   javascripts/utils/detect.js
+//   common/app/layout/Breakpoint.scala
+
+$mq-breakpoints: (
+    mobile:          gs-span(4)  + $gs-gutter,   // 320px
+    mobileMedium:    gs-span(5)  - $gs-gutter,   // 360px
+    mobileLandscape: gs-span(6)  + $gs-gutter,   // 480px
+    phablet:         gs-span(8)  + $gs-gutter*2, // 660px
+    tablet:          gs-span(9)  + $gs-gutter*2, // 740px
+    desktop:         gs-span(12) + $gs-gutter*2, // 980px
+    leftCol:         gs-span(14) + $gs-gutter*2, // 1140px
+    wide:            gs-span(16) + $gs-gutter*2, // 1300px
+);
+
+// Show the current breakpoint in the top right corner of the viewport:
+// see https://github.com/guardian/sass-mq#seeing-the-currently-active-breakpoint
+// Uncomment to activate during development
+// $mq-show-breakpoints: (mobile, mobileLandscape, tablet, desktop, leftCol, wide);
+
+
+// Guss defaults overrides
+// =============================================================================
+
+$guss-column-rule: none;
+$f-serif-headline: 'Guardian Egyptian Web', 'Guardian Text Egyptian Web', Georgia, serif;
+
+
+// Colours, take from pasteup/palette
+// =============================================================================
+
+$neutral-2-contrasted:   darken($neutral-2, 3%);
+
+// Garnett
+// =============================================================================
+
+$garnett-neutral-1: #121212;
+$garnett-neutral-2: #999999;
+$garnett-neutral-3: #f6f6f6;
+$garnett-neutral-4: #d9d9d9;
+
+
+$news-garnett-main-1: #cc0a11;
+$news-garnett-feature: #ff1921;
+$news-garnett-media-main-1: #ff4e36;
+$news-garnett-highlight: #ffe500;
+
+$opinion-garnett-main-1: #ed6300;
+$opinion-garnett-feature: #f5be2c;
+$opinion-garnett-media-main-1: #ff7f0f;
+
+$sport-garnett-main-1: #056da1;
+$sport-garnett-feature: #1896d7;
+$sport-garnett-media-main-1: #00b2ff;
+
+$arts-garnett-main-1: #8f7550;
+$arts-garnett-feature: #ab8958;
+$arts-garnett-media-main-1: #eacca0;
+
+$lifestyle-garnett-main-1: #951d7a;
+$lifestyle-garnett-feature: #df2770;
+$lifestyle-garnett-main-media-1: #ffabdb;
+
+$live-garnett-main-1: $news-garnett-main-1;
+$live-garnett-main-2: #ffbac8;
+$live-garnett-accent: #d65353;
+$live-garnett-sport1: $sport-garnett-main-1;
+$live-garnett-sport2: #90dcff;
+$live-garnett-arts1: $arts-garnett-main-1;
+$live-garnett-arts2: #e7d4b9;
+$live-garnett-lifestyle1: $lifestyle-garnett-main-1;
+$live-garnett-lifestyle2: $live-garnett-main-2;
+
+
+$media-garnett-main-1: $multimedia-main-1;
+
+$vjs-garnett-small-button-size: 42px;
+$vjs-garnett-medium-button-size: 50px;
+$vjs-garnett-large-button-size: 60px;
+
+
+// Tones
+// =============================================================================
+
+$news-default:           $news-main-1;
+$news-accent:            $news-main-2;
+
+$feature-default:        $features-support-1;
+$feature-accent:         $features-main-2;
+$feature-mute:           $features-support-3;
+
+$analysis-default:       $news-main-1;
+$analysis-accent:        $news-main-2;
+$analysis-mute:          $comment-support-2;
+$analysis-background:    $neutral-7;
+
+$comment-default:        $comment-support-4;
+$comment-accent:         $comment-main-2;
+$comment-background:     $comment-support-2;
+
+$live-default:           $live-main-1;
+$live-accent:            $live-main-2;
+$live-mute:              $features-support-3;
+
+$media-default:          $multimedia-main-2;
+$media-background:       $multimedia-support-5;
+$media-mute:             $neutral-1;
+
+$review-accent:          $comment-support-3;
+$review-background:      $comment-support-1;
+
+$editorial-default:      $news-main-1;
+$editorial-accent:       $news-support-1;
+
+$crosswordAccent1:       $news-main-1;
+$crosswordAccent2:       $news-main-2;
+
+$story-package:          $news-support-7;
+$story-package-garnett:  #3e4143;
+
+$paidfor-background:     $news-support-3;
+//temporary change from #fce800 whilst secret special report is running
+$special-report-accent:  #ffd900;
+
+// This is only for use of the subnav in the header
+$subnav-grey: #5c6268;
+
+// Football
+// =============================================================================
+
+$sport-bright:           #70d2e6;
+$sport-mid:              $guardian-brand;
+$sport-dark:             #003f64;
+
+$sport-home:             #70d2e6;
+$sport-away:             #003f64;
+
+// Stati
+// =============================================================================
+
+$status-positive:        $success;
+$status-neutral:         $neutral-2;
+$status-negative:        $error;
+
+// Quiz colours
+// =============================================================================
+
+$quiz-correct:           #3db540;
+$quiz-incorrect:         #c3021b;
+
+// Social
+// =============================================================================
+
+$social-email:           #767676;
+$social-facebook:        #3067a3;
+$social-twitter:         #03b3ee;
+$social-gplus:           #e15440;
+$social-whatsapp:        #59cb3f;
+$social-linkedin:        #0071a1;
+$social-pinterest:       #b9252c;
+$social-messenger:       #0084ff;
+
+
+// Membership
+// =============================================================================
+
+$membership-default:     #bb3a7f;
+
+// Commercial content
+// =============================================================================
+
+$paid-article:              #d9d9d9;
+$paid-article-variant:      #ffffff;
+$paid-article-header:       #bfbfbf;
+$paid-article-header-bg:    #b8b8b8;
+$paid-article-subheader:    #cccccc;
+$paid-article-subheader-bg: #c4c4c4;
+$paid-article-card-bg:      $neutral-8;
+$paid-article-media-bg:     #bbb7b1;
+$paid-article-icon:         #767676;
+$paid-article-brand:        #69d1ca;
+$paid-article-mpu:          #cccccc;
+$paid-article-richlink:     #65a897;
+$rainbow-red:               #ed1c24; // from Guss
+
+$paid-card-kicker:        #626262;
+
+$c-top-header-background: $guardian-brand-dark; // one-off colour for header bg
+
+// MPU
+// =============================================================================
+
+$mpu-original-width: 300px;
+$mpu-original-height: 250px;
+$mpu-align-offset: 20px; // Align bottom of ad with text on desktop
+$mpu-ad-label-height: $gs-baseline*2;
+
+// COMMERCIAL GU STYLE
+// =============================================================================
+$gustyle-tone: #fedd79;
+
+// Dimensions
+// =============================================================================
+
+$action-icon-width: 23px;
+$action-icon-rightspace: 7px;
+$content-top-padding: $gs-baseline / 1.5;
+
+
+// Video.JS player
+// =============================================================================
+
+$vjs-small-button-size: 50px;
+$vjs-large-button-size: 70px;
+
+// Available image widths
+// these should match the ones in common/modules/ui/images.js
+// =============================================================================
+
+$available-image-widths: 140px, 220px, 300px, 460px, 620px, 700px, 860px, 940px, 1430px, 1920px;
+
+// Other variables common to many partials
+// =============================================================================
+
+$popup-toggle-arrow-size: 4px;
+
+/**
+ * This shall stop the z-index chaos
+ */
+
+$zindex-ui: 1000;      // UI elements
+$zindex-ads: 1010;     // Ads
+$zindex-content: 1015; // Modals and overlays inside content
+$zindex-sticky: 1020;  // Sticky header
+$zindex-modal: 1030;   // Search modal
+$zindex-popover: 1040; // Breaking news
+$zindex-overlay: 1050; // Overlays
+$zindex-notifications-permissions-warning: 1060; //Chrome Live Blog notifications
+$zindex-main-menu: 1070; // New header navigation dropdown
+$zindex-sticky-top-banner: 1080;  // Sticky header
+$zindex-lightbox: 1090; // Lightbox

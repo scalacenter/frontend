@@ -1,0 +1,24 @@
+.tone-external--item {
+    background-color: $neutral-6;
+
+    .fc-item__kicker,
+    .fc-item__byline {
+        color: $external-main-1;
+    }
+
+    .fc-item__kicker--dreamsnap {
+        background-color: mix(#000000, $neutral-6, 10%);
+    }
+
+    .u-faux-block-link--hover,
+    .fc-item__image-container {
+        background-color: darken($neutral-6, 3%);
+    }
+
+    .fc-item__container:before,
+    .rich-link__container:before {
+        background-color: $external-support-1;
+    }
+}
+
+

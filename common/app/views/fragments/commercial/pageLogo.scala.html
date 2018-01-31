@@ -1,0 +1,9 @@
+@import com.gu.commercial.branding.Branding
+@(branding: Branding,
+  isInteractive: Boolean,
+  onDarkBackground: Boolean = false
+)(implicit request: RequestHeader)
+
+<div class="badge badge--alt @if(isInteractive){badge--interactive}">
+    @logo(branding, onDarkBackground)
+</div>

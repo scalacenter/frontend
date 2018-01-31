@@ -1,0 +1,28 @@
+@(trail: common.commercial.hosted.HostedPage)
+
+<div class="hosted-next-autoplay js-hosted-next-autoplay" data-link-name="Next video autoplay">
+    <div class="hosted-next-autoplay__cancel">
+        <button class="site-message__close-btn js-autoplay-cancel" data-link-name="Cancel autoplay of the next video">
+            <span>Hide</span>
+        </button>
+    </div>
+    <div class="hosted-next-autoplay__next-in-series">
+        <div class="hosted-next-autoplay__subheader">@{trail.cta.label}</div>
+        <a href="@{trail.cta.url}" rel="nofollow" class="hosted-next-autoplay__tile hosted-tone-btn" data-link-name="@{trail.name}" target="_blank">
+            @{if(trail.cta.btnText.isDefined) trail.cta.btnText else s"Visit ${trail.owner} now"}@fragments.inlineSvg("arrow-right", "icon", List(""))
+        </a>
+    </div>
+    <div class="hosted-next-autoplay__video">
+        <div class="hosted-next-autoplay__header">
+            <div class="hosted-next-autoplay__continue hosted-tone">Continue watching</div>
+            <h2 class="hosted-next-autoplay__subheader">@{trail.title}</h2>
+        </div>
+        <a href="@{trail.url}" class="hosted-next-autoplay__poster" data-link-name="Next Hosted Video Autoplay: @{trail.title}">
+            <img class="hosted-next-autoplay__poster-img" src="@{trail.thumbnailUrl}">
+            <div class="hosted-next-autoplay__poster-timer hosted-tone-btn js-autoplay-timer" data-next-page="@{trail.url}">@fragments.inlineSvg("arrow-right", "icon", List(""))</div>
+        </a>
+        <a href="@{trail.url}" class="hosted__next-video--mobile" data-link-name="Next Hosted Video @{trail.title}" target="_blank">
+                            Watch now
+        </a>
+    </div>
+</div>

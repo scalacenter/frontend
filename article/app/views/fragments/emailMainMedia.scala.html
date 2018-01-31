@@ -1,0 +1,32 @@
+@(article: model.Article)(implicit request: RequestHeader)
+
+@import views.support.{ImgSrc, EmailImage}
+@import views.support.EmailHelpers.icon
+@import fragments.email._
+
+@if(!article.elements.hasMainEmbed) {
+    @article.elements.mainPicture.map { picture =>
+        @EmailImage.bestSrcFor(picture.images).map { url =>
+            @row(Seq("no-pad")) {
+                <img width="580" class="full-width" src="@url" alt="@ImgSrc.getFallbackAsset(picture.images).flatMap(_.altText).getOrElse("")" />
+            }
+
+            @picture.images.largestImage.map { img =>
+                @row(Seq("padded")) {
+                    @if(img.showCaption) {
+                        <div class="caption">
+                            @icon("camera")
+
+                            @img.caption.map(Html(_))
+
+                            @if(img.displayCredit && !img.creditEndsWithCaption) {
+                                @img.credit.map(Html(_))
+                            }
+                            <hr />
+                        </div>
+                    }
+                }
+            }
+        }
+    }
+}

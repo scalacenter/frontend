@@ -1,0 +1,93 @@
+$sfl-button-height: 30px;
+
+// size etc
+.save-for-later__button {
+    @include button-height($sfl-button-height);
+    font-size: get-font-size(textSans, 1);
+    border: 0;
+    background-color: transparent;
+    padding: 0;
+    color: $news-main-1;
+
+    .inline-icon {
+        text-align: center;
+        margin: 0;
+        margin-right: .5em;
+        width: $sfl-button-height;
+        height: $sfl-button-height;
+        border: 1px solid $news-main-1;
+        fill: $news-main-1;
+
+        svg {
+            width: 8px;
+        }
+    }
+}
+
+.save-for-later__button--saved,
+.save-for-later__button--save:hover,
+.save-for-later__button--save:focus {
+    .inline-icon {
+        fill: #ffffff;
+        background-color: $news-main-1;
+    }
+}
+
+.social--expanded-top {
+    .save-for-later__button--saved,
+    .save-for-later__button--save:hover,
+    .save-for-later__button--save:focus {
+        .inline-icon {
+            fill: $neutral-5;
+        }
+    }
+}
+
+// media tone
+.tonal--tone-media {
+    .save-for-later__button {
+        color: $neutral-4;
+
+        .inline-icon {
+            border-color: $neutral-2;
+            fill: $neutral-4;
+        }
+    }
+
+    .save-for-later__button--saved,
+    .save-for-later__button--save:hover,
+    .save-for-later__button--save:focus {
+        .inline-icon {
+            fill: $multimedia-support-5;
+            border-color: $neutral-4;
+            background-color: $neutral-4;
+        }
+    }
+
+    .social--expanded-top {
+        .save-for-later__button--saved,
+        .save-for-later__button--save:hover,
+        .save-for-later__button--save:focus {
+            .inline-icon {
+                fill: $neutral-1;
+            }
+        }
+    }
+}
+
+// button labels per state
+.save-for-later__label {
+    display: none;
+}
+
+@each $state in (save, saved, remove) {
+    .save-for-later__button--#{$state} {
+        .save-for-later__label--#{$state} {
+            display: inline;
+            .meta__extras--crossword & {
+                display: none;
+            }
+
+        }
+    }
+}

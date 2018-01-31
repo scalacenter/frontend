@@ -1,0 +1,32 @@
+@(metaData: model.Page)(body: Html)(implicit request: RequestHeader, context: model.ApplicationContext)
+
+@import conf.switches.Switches._
+@import common.InlineJs
+@import templates.inlineJS.blocking.js._
+@import play.api.Mode.Dev
+@import conf.Static
+
+<!doctype html>
+<head>
+    @if(context.environment.mode == Dev || !InlineCriticalCss.isSwitchedOn) {
+        <link rel="stylesheet" type="text/css" href="@Static("stylesheets/head.email-signup.css")" />
+    } else {
+        <style class="js-loggable">
+        @Html(common.Assets.css.head(Some("email-signup")))
+        </style>
+    }
+
+    @fragments.fontDefinitions()
+
+    <script id="gu">
+    @if(FontSwitch.isSwitchedOn) {
+        @InlineJs(loadFonts().body, "loadFonts.js")
+    }
+    </script>
+
+</head>
+<html>
+    <body>
+        @body
+    </body>
+</html>

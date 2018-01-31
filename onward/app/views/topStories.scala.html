@@ -1,0 +1,10 @@
+@import model.Page
+
+@(page: Page, trails: Seq[model.pressed.PressedContent])(implicit request: RequestHeader, context: model.ApplicationContext)
+
+@mainLegacy(page){
+}{
+
+    @fragments.topStoriesBody(trails)
+
+}

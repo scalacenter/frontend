@@ -1,0 +1,12 @@
+@(crosswordPage: crosswords.CrosswordPageWithContent)(implicit request: RequestHeader)
+<div class="content-footer">
+
+    @fragments.discussionFooter(crosswordPage.item.content, crosswordPage.item.trail.isCommentable, crosswordPage.item.trail.isClosedForComments, crosswordPage.item.content.shortUrlId)
+
+    @if(crosswordPage.item.trail.isCommentable) {
+        <div class="js-repositioned-comments content__repositioned-comments"></div>
+    }
+
+    @fragments.onwardPlaceholder(isPaidContent = false)
+
+</div>

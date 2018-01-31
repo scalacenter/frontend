@@ -1,0 +1,111 @@
+@(projectName: Option[String] = None)(head: Html)(body: Html)(implicit page: model.Page, request: RequestHeader, context: model.ApplicationContext)
+@import common.{Edition, Navigation, commercial}
+@import conf.switches.Switches.{BreakingNewsSwitch, SurveySwitch}
+@import model.Page.getContent
+@import views.support.{Commercial, RenderClasses}
+@import play.api.Mode.Dev
+
+@headerAndTopAds(showAdverts: Boolean, edition: Edition, content: Option[model.ContentType]) = {
+  @if(!page.metadata.shouldHideHeaderAndTopAds) {
+    @defining(showAdverts && !content.exists(_.tags.isTheMinuteArticle) && !Commercial.isAdFree(request)) { showTopSlot =>
+      @if(content.exists(_.tags.hasSuperStickyBanner)) {
+          @if(showTopSlot) {
+            @fragments.commercial.topBanner()
+          }
+          @fragments.header()
+      } else {
+          <div id="bannerandheader">
+              @if(showTopSlot) {
+                @fragments.commercial.topBanner()
+              }
+              @fragments.header()
+          </div>
+      }
+      <div id="maincontent" tabindex="0"></div>
+    }
+  }
+}
+
+<!DOCTYPE html>
+<html id="js-context" class="js-off is-not-modern id--signed-out" lang="en" data-page-path="@request.path">
+<head>
+    @fragments.head(projectName, head)
+</head>
+
+@defining(getContent(page), Commercial.shouldShowAds(page), Edition(request)) { case (content, showAdverts, edition) =>
+    @defining(Navigation.topLevelItem(edition.navigation, page)) { navigation =>
+
+    <body
+        id="top"
+        class="@RenderClasses(Map(
+            ("has-page-skin", page.metadata.hasPageSkin(edition)),
+            ("has-localnav", navigation.filter(_.links.nonEmpty).nonEmpty),
+            ("has-membership-access-requirement", page.metadata.requiresMembershipAccess),
+            ("childrens-books-site", page.metadata.sectionId == "childrens-books-site"),
+            ("has-super-sticky-banner", content.exists(_.tags.hasSuperStickyBanner)),
+            ("is-immersive", content.exists(_.content.isImmersive)),
+            ("is-immersive-interactive", content.exists(content => content.tags.isInteractive && content.content.isImmersive))))"
+        itemscope itemtype="http://schema.org/WebPage">
+
+        @fragments.message()
+
+        <a class="u-h skip" href="#maincontent" data-link-name="skip : main content">Skip to main content</a>
+
+        @if(page.metadata.hasPageSkinOrAdTestPageSkin(edition)) {
+            @fragments.commercial.pageSkin()
+        }
+
+        @if(!page.metadata.isFront && SurveySwitch.isSwitchedOn) {
+            @fragments.commercial.survey()
+        }
+
+        @page match {
+            case page: commercial.hosted.HostedPage => {}
+            case _ => {
+                @headerAndTopAds(showAdverts, edition, content)
+            }
+        }
+
+        @if(BreakingNewsSwitch.isSwitchedOn) {
+            <div class="js-breaking-news-placeholder breaking-news breaking-news--hidden breaking-news--fade-in"
+            data-link-name="breaking news"
+            data-component="breaking-news"></div>
+        }
+
+        @body
+
+        @**********************
+         24x7 support training
+
+         We intentionally modified the displayed section on this specific article.
+         This is a failure that trainees have to diagnose in frontend.
+        ************************@
+        @if(request.path == "/info/2015/mar/11/-removed-article") {
+            <script type="text/javascript">
+                document.querySelectorAll('[data-link-name="article section"]')[0].textContent = "Culture"
+                @***
+                 The following is a misdirection to let people think damned CAPI is causing the issue
+                ***@
+                console.log("Error connecting to content API to retrieve section: 503")
+                console.log("Defaulting to Culture")
+            </script>
+        }
+
+        @fragments.footer()
+
+        @fragments.inlineJSNonBlocking()
+
+        @fragments.analytics.base()
+    </body>
+        @if(context.environment.mode == Dev) {
+            <script>
+                if (window.callPhantom) {
+                    setTimeout(function() {
+                        window.callPhantom('takeShot');
+                    }, 10000); // Wait arbitrary 10 seconds before taking the screenshot to let things settled down
+                }
+            </script>
+        }
+    </html>
+}
+}

@@ -1,0 +1,30 @@
+@import views.support.Commercial.TrackingCodeBuilder.mkInteractionTrackingCode
+@(frontId: String,
+  containerIndex: Int,
+  containerModel: common.commercial.ContainerModel)(implicit request: RequestHeader)
+
+<div class="dumathoin__row">
+    <div class="dumathoin__column">
+        @containerModel.content.initialCards.take(1).map(card => views.html.fragments.commercial.cards.itemLargeCard(
+            card,
+            optAdvertClassNames = Some(Seq("inverse", "thumbnail", "paidfor")),
+            omnitureId = mkInteractionTrackingCode(frontId, containerIndex, containerModel, card),
+            useCardBranding = !containerModel.isSingleSponsorContainer
+        ))
+        @containerModel.content.initialCards.slice(1, 4).map(card => views.html.fragments.commercial.cards.itemLargeCard(
+            card,
+            optAdvertClassNames = Some(Seq("inverse", "thumbnail", "paidfor")),
+            omnitureId = mkInteractionTrackingCode(frontId, containerIndex, containerModel, card),
+            minimiseOnMobile = true,
+            useCardBranding = !containerModel.isSingleSponsorContainer
+        ))
+    </div>
+    @containerModel.content.initialCards.slice(4, 5).map(card => views.html.fragments.commercial.cards.itemCard(
+        card,
+        cardType = layout.cards.Half,
+        optClassNames = Some(Seq("hide-until-tablet")),
+        optAdvertClassNames = Some(Seq("paidfor")),
+        omnitureId = mkInteractionTrackingCode(frontId, containerIndex, containerModel, card),
+        useCardBranding = !containerModel.isSingleSponsorContainer
+    ))
+</div>

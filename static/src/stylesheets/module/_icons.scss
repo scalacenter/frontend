@@ -1,0 +1,70 @@
+.i,
+.caption:before,
+figcaption:before {
+    display: inline-block;
+    background-repeat: no-repeat;
+}
+.svg .i {
+    background-size: contain;
+}
+.i-date {
+    @if ($svg-support) {
+        .svg & {
+            background-size: 100%;
+            width: 10px;
+            height: 10px;
+        }
+    }
+}
+
+// Quotes
+blockquote.quoted .inline-quote {
+    fill: $neutral-2;
+    position: absolute;
+    svg {
+        width: 27px;
+        height: 18px;
+    }
+}
+
+blockquote .quoted__contents {
+    margin-left: 35px;
+}
+
+@if ($svg-support) {
+    .svg .item--dark .i-comment-light-grey {
+        @extend %svg-i-comment-light-grey;
+    }
+}
+
+@if ($svg-support) {
+    .pseudo-icon {
+        .svg &:before {
+            content: '';
+            height: 1em;
+            padding-right: .3em;
+            vertical-align: -10%;
+            display: inline-block;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+    }
+    .pseudo-icon--audio--white {
+        &:before {
+            @extend %svg-i-volume-high-white;
+            width: 1.23em;
+        }
+    }
+    .pseudo-icon--download--white {
+        &:before {
+            @extend %svg-i-download-white !optional;
+            width: 1em;
+        }
+    }
+    .pseudo-icon--rss--white {
+        &:before {
+            @extend %svg-i-rss-white !optional;
+            width: 1em;
+        }
+    }
+}

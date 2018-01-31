@@ -1,0 +1,52 @@
+@()(implicit request: RequestHeader, context: model.ApplicationContext)
+
+@import common.{ LinkTo, Edition }
+@import navigation.NavMenu
+@import navigation.ReaderRevenueSite.Membership
+@import navigation.UrlHelpers.{getReaderRevenueUrl, AmpHeader}
+
+<header class="header"
+        role="banner">
+    <nav class="header__inner">
+
+        <div class="header__cta-container">
+            <a class="header-cta-item js-acquisition-link"
+               data-link-name="amp : nav : supporter-cta"
+                href="@getReaderRevenueUrl(Membership, AmpHeader)">
+                <span class="header-cta-item--circle"></span>
+                <span class="header-cta-item--text">
+                    become a <br>supporter</span>
+                </span>
+            </a>
+        </div>
+
+        <a href="@LinkTo{/}"
+        class="header__logo"
+        data-link-name="nav2 : logo">
+            <span class="u-h">The Guardian - Back to home</span>
+            @fragments.inlineSvg("guardian-logo-160", "logo", List(
+                "header__logo"
+            ))
+        </a>
+
+        <ul class="pillars">
+            @NavMenu(Edition.defaultEdition).pillars.map { link =>
+                <li class="pillars__item">
+                    <a class="pillar-link"
+                        href="@LinkTo(link.url)"
+                        data-link-name="amp : nav : @link.title">
+                            @link.title
+                    </a>
+                </li>
+            }
+        </ul>
+
+        <button class="veggie-burger" on='tap:sidebar1.toggle'
+            data-link-name="amp : nav : toggle-veggie-burger">
+                <span class="veggie-burger__icon"></span>
+                <span class="u-h">Menu</span>
+        </button>
+    </nav>
+</header>
+
+@fragments.amp.headerMenu()

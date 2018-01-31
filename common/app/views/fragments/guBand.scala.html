@@ -1,0 +1,13 @@
+@()(implicit request: RequestHeader)
+@import views.support.Commercial.glabsLink
+@import common.LinkTo
+
+<div class="paidfor-band">
+    <div class="gs-container paidfor-band__inner">
+        @fragments.commercial.paidForMeta()
+        <a href="@LinkTo(glabsLink(request))">
+            @inlineSvg("glabs-logo", "logo")
+            <span class='u-h'>Guardian Labs</span>
+        </a>
+    </div>
+</div>

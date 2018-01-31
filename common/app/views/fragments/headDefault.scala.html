@@ -1,0 +1,23 @@
+@(item: model.ContentType, page: model.Page, showBadge: Boolean = false)(implicit request: RequestHeader)
+
+<header class="content__head @if(item.tags.isInteractive) {content__head--interactive} u-cf">
+    <div class="gs-container">
+        <div class="content__main-column">
+
+            @fragments.meta.metaInline(item)
+
+            <h1 class="content__headline js-score" itemprop="headline">@Html(item.trail.headline)</h1>
+
+            @if(!item.tags.isVideo && !item.tags.isGallery) {
+                @fragments.standfirst(item)
+            }
+
+            @fragments.commercial.badge(item, page)
+
+            @if(item.tags.isInteractive && !item.trail.shouldHidePublicationDate) {
+                @fragments.meta.dateline(item.trail.webPublicationDate, item.fields.lastModified, item.content.hasBeenModified, item.fields.firstPublicationDate)
+            }
+
+        </div>
+    </div>
+</header>

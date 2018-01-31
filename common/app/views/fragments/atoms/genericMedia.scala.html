@@ -1,0 +1,21 @@
+@import views.support.RenderClasses
+
+@(media: model.content.MediaAtom, displayCaption: Boolean, amp: Boolean)(implicit request: RequestHeader)
+
+    @if(!amp) {
+        <div class="@RenderClasses(Map(
+        "u-responsive-ratio" -> true,
+        "u-responsive-ratio--hd" -> true
+    ))">
+        }
+    @Html(media.defaultHtml)
+
+    @if(!amp){
+    </div>
+    }
+
+    @if(displayCaption) {
+        @mediaAtomCaption(media.title)
+    }
+
+
