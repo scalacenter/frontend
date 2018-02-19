@@ -29,3 +29,6 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "0.9.3")
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
 
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.0")
+
+// See https://github.com/coursier/coursier/issues/450#issuecomment-302267082
+classpathTypes += "maven-plugin"
